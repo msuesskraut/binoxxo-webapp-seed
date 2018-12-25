@@ -119,6 +119,50 @@ fn view_board(model: &Model) -> El<Message> {
     ]
 }
 
+fn view_difficulty(difficulty: Difficulty) -> El<Message> {
+    use seed::*;
+
+    a![
+        attrs!{
+            "class" => "dropdown-item";
+            "href" => "#";
+        },
+        format!("{}", difficulty),
+        simple_ev("click", Message::NewGame(difficulty))
+    ]
+}
+
+fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
+    use seed::*;
+
+    vec!(
+        h4![format!("Difficulty: {}", difficulty)],
+        div![
+            attrs!{"class" => "dropdown"},
+            button![
+                attrs!{
+                    "class" => "btn btn-primary dropdown-toggle";
+                    "type" => "button";
+                    "id" => "New-Game-Difficulty";
+                    "data-toggle" => "dropdown";
+                    "aria-haspopup" => "true";
+                    "aria-expanded" => "false";
+                },
+                "New Game"
+            ],
+            div![
+                attrs!{
+                    "class" => "dropdown-menu";
+                    "aria-labelledby" => "New-Game-Difficulty";
+                },
+                view_difficulty(Difficulty::Easy),
+                view_difficulty(Difficulty::Medium),
+                view_difficulty(Difficulty::Hard),
+            ]
+        ],
+    )
+}
+
 pub fn view(model: Model) -> El<Message> {
     use seed::*;
 
@@ -134,16 +178,12 @@ pub fn view(model: Model) -> El<Message> {
         div![
             attrs!{"class" => "row"},
             div![
-                attrs!{"class" => "col-xs-6 col-sm-6 col-md-6 col-lg-6"},
+                attrs!{"class" => "col-xs-8 col-sm-8 col-md-8 col-lg-8"},
                 view_board(&model)
             ],
             div![
-                attrs!{"class" => "col-xs-6 col-sm-6 col-md-6 col-lg-6"},
-                button![
-                    attrs!{"class" => "btn btn-primary"},
-                    "New Game",
-                    simple_ev("click", Message::NewGame(Difficulty::Easy))
-                ]
+                attrs!{"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
+                view_new_game(model.difficulty)
             ]
         ]
     ]

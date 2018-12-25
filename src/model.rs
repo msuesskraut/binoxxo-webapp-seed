@@ -1,12 +1,23 @@
 use binoxxo::field::{Board, Field};
 use binoxxo::bruteforce::create_puzzle_board;
+use std::fmt;
 
 #[allow(dead_code)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Difficulty {
     Easy,
     Medium,
     Hard
+}
+
+impl fmt::Display for Difficulty {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Difficulty::Easy => write!(f, "Easy"),
+            Difficulty::Medium => write!(f, "Medium"),
+            Difficulty::Hard => write!(f, "Hard"),
+        }
+    }
 }
 
 impl Default for Difficulty {
@@ -54,8 +65,8 @@ impl Model {
     pub fn new(difficulty: Difficulty) -> Model {
         let (size, guesses) = match difficulty {
             Difficulty::Easy => (6, 5),
-            Difficulty::Medium => (10, 10),
-            Difficulty::Hard => (12, 15),
+            Difficulty::Medium => (8, 10),
+            Difficulty::Hard => (10, 15),
         };
 
         let board = create_puzzle_board(size, guesses);
