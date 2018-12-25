@@ -1,0 +1,41 @@
+$base_color : #202020;
+$fixed_color : lighten($base_color, 80%);
+$guess_color : #009900;
+
+body {
+    background-color: #efefef;
+    color: $base_color;
+}
+
+h1 {
+    font-size: 140%;
+    font-weight: bold;
+    margin: 1em;
+    text-align: center;
+}
+
+game-msg {
+    margin-top:10px;
+    margin-left:10px;
+    margin-right:10px;
+}
+
+#board {
+    table {
+        margin: 2em;
+        border-collapse: collapse;
+
+        td {
+            border: 1px solid $base_color;
+            padding: 1em;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 800;
+            color: lighten($base_color, 80%);
+            cursor: default;
+        }
+        td.guess {
+            color: $guess_color;
+            cursor: pointer;
+        }
+    }
+}
