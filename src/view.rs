@@ -44,12 +44,16 @@ fn view_field(field: Field) -> El<Message> {
     use seed::*;
 
     let classes = match field {
-        Field::Empty => "far fa-square",
+        Field::Empty => "fas fa-circle",
         Field::X => "fas fa-times",
         Field::O => "far fa-circle"
     };
 
-    i![attrs!{"class" => classes}]
+    let mut i = i![attrs!{"class" => classes}];
+    if Field::Empty == field {
+        i.add_style("font-size".into(), "20%".into());
+    }
+    i
 }
 
 fn view_cell(model: &Model, col: usize, row: usize) -> El<Message> {
@@ -59,11 +63,13 @@ fn view_cell(model: &Model, col: usize, row: usize) -> El<Message> {
     let editable = model.editable.is_editable(col, row);
     let class = if editable { "guess" } else { "" };
     let id = format!("cell-{}-{}", col, row);
+    let size = model.get_size();
 
     let mut td = td![
         // id is required by engine for correct updates,
         // otherwise "board" gets randomized in NewGame (bug in seed?)
         attrs!{"class" => class.to_string(); "id" => id },
+        style!{"width" => format!("{}%", 100.0 / (size as f64))},
         view_field(field),
     ];
     if editable {

@@ -2,6 +2,10 @@ $base_color : #202020;
 $fixed_color : darken($base_color, 80%);
 $guess_color : #009900;
 
+$phone: "(max-width: 767px)";
+$tablet: "(min-width: 768px) and (max-width: 1023px)";
+$desktop: "(min-width: 1024px)";
+
 body {
     background-color: #efefef;
     color: $base_color;
@@ -32,6 +36,17 @@ game-msg {
             font-weight: 800;
             color: $fixed_color;
             cursor: default;
+            text-align: center;
+
+            @media #{$desktop} {
+                font-size: 120%;
+            }
+            @media #{$tablet} {
+                font-size: 120%;
+            }
+            @media #{$phone} {
+                font-size: 80%;
+            }
         }
         td.guess {
             color: $guess_color;
