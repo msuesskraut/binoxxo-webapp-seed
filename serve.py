@@ -6,6 +6,7 @@ from __future__ import print_function
 from contextlib import contextmanager
 
 import http.server
+import os
 import socketserver
 
 PORT = 8000
@@ -25,6 +26,7 @@ def CreateTCPServer(addr, handler):
     finally:
         httpd.server_close()
 
+os.chdir('dist')
 with CreateTCPServer(("", PORT), handler) as httpd:
     httpd.allow_reuse_address = True
     print("Serving at port", PORT)
