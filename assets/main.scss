@@ -1,5 +1,5 @@
 $base_color : #202020;
-$fixed_color : lighten($base_color, 80%);
+$fixed_color : darken($base_color, 80%);
 $guess_color : #009900;
 
 body {
@@ -30,7 +30,7 @@ game-msg {
             padding: 1em;
             font-family: Arial, Helvetica, sans-serif;
             font-weight: 800;
-            color: lighten($base_color, 80%);
+            color: $fixed_color;
             cursor: default;
         }
         td.guess {
