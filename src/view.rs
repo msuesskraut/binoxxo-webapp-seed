@@ -1,7 +1,7 @@
 use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid};
 use crate::model::*;
-use crate::control::Message;
+use crate::control::{CellPos, Message};
 use seed::prelude::*;
 
 macro_rules! table {
@@ -52,14 +52,17 @@ fn view_field(field: Field) -> El<Message> {
     i![attrs!{"class" => classes}]
 }
 
-fn view_cell(field: Field, editable: bool) -> El<Message> {
+fn view_cell(model: &Model, col: usize, row: usize) -> El<Message> {
     use seed::*;
 
+    let field = model.board.get(col, row);
+    let editable = model.editable.is_editable(col, row);
     let class = if editable { "guess" } else { "" };
 
     td![
         attrs!{"class" => class.to_string() },
-        view_field(field)
+        view_field(field),
+        simple_ev("click", Message::Toggle(CellPos{col, row}))
     ]
 }
 
@@ -67,8 +70,9 @@ fn view_row(model: &Model, row: usize) -> El<Message> {
     let size = model.get_size();
     let cells: Vec<El<Message>> = (0..size)
         .map(|col| view_cell(
-                model.board.get(col, row),
-                model.editable.is_editable(col, row)))
+                model,
+                col,
+                row))
         .collect();
     tr![cells]
 } 
