@@ -59,11 +59,15 @@ fn view_cell(model: &Model, col: usize, row: usize) -> El<Message> {
     let editable = model.editable.is_editable(col, row);
     let class = if editable { "guess" } else { "" };
 
-    td![
+    let mut td = td![
         attrs!{"class" => class.to_string() },
         view_field(field),
-        simple_ev("click", Message::Toggle(CellPos{col, row}))
-    ]
+        //format!("({}, {})", col, row),
+    ];
+    if editable {
+        td.listeners.push(simple_ev("click", Message::Toggle(CellPos{col, row})));
+    }
+    td
 }
 
 fn view_row(model: &Model, row: usize) -> El<Message> {
@@ -108,5 +112,31 @@ fn view_board(model: &Model) -> El<Message> {
 }
 
 pub fn view(model: Model) -> El<Message> {
-    view_board(&model)
+    use seed::*;
+
+    div![
+        attrs!{"class" => "container"},
+        div![
+            attrs!{"class" => "row"},
+            div![
+                attrs!{"class" => "col"},
+                h1![ "Let's play Binoxxo"]
+            ]
+        ],
+        div![
+            attrs!{"class" => "row"},
+            div![
+                attrs!{"class" => "col-xs-6 col-sm-6 col-md-6 col-lg-6"},
+                view_board(&model)
+            ],
+            div![
+                attrs!{"class" => "col-xs-6 col-sm-6 col-md-6 col-lg-6"},
+                button![
+                    attrs!{"class" => "btn btn-primary"},
+                    "New Game",
+                    simple_ev("click", Message::NewGame(Difficulty::Easy))
+                ]
+            ]
+        ]
+    ]
 }

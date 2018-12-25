@@ -51,7 +51,7 @@ pub struct Model {
 }
 
 impl Model {
-    fn new(difficulty: Difficulty) -> Model {
+    pub fn new(difficulty: Difficulty) -> Model {
         let (size, guesses) = match difficulty {
             Difficulty::Easy => (6, 5),
             Difficulty::Medium => (10, 10),
