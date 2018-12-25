@@ -37,9 +37,15 @@ fn update(msg: Msg, model: Model) -> Model {
 // View
 
 fn view(model: Model) -> El<Msg> {
-    button![ 
-        simple_ev("click", Msg::Increment), 
-        format!("Hello, World × {}", model.val) 
+    div![
+        button![ 
+            attrs!{"class" => "btn btn-light"},
+            simple_ev("click", Msg::Increment), 
+            format!("Hello, World × {}", model.val) 
+        ],
+        i![attrs!{"class" => "far fa-square"}],
+        i![attrs!{"class" => "fas fa-times"}],
+        i![attrs!{"class" => "far fa-circle"}]
     ]
 }
 
