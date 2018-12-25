@@ -24,7 +24,7 @@ pub struct Editable {
 impl Editable {
     fn new(board: &Board) -> Editable {
         let size = board.get_size();
-        let mut editable = vec![false; size];
+        let mut editable = vec![false; size * size];
 
         for x in 0..size {
             for y in 0..size {
