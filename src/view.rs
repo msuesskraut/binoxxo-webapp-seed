@@ -58,11 +58,13 @@ fn view_cell(model: &Model, col: usize, row: usize) -> El<Message> {
     let field = model.board.get(col, row);
     let editable = model.editable.is_editable(col, row);
     let class = if editable { "guess" } else { "" };
+    let id = format!("cell-{}-{}", col, row);
 
     let mut td = td![
-        attrs!{"class" => class.to_string() },
+        // id is required by engine for correct updates,
+        // otherwise "board" gets randomized in NewGame (bug in seed?)
+        attrs!{"class" => class.to_string(); "id" => id },
         view_field(field),
-        //format!("({}, {})", col, row),
     ];
     if editable {
         td.listeners.push(simple_ev("click", Message::Toggle(CellPos{col, row})));
