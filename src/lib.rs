@@ -1,5 +1,3 @@
-#[macro_use]
-extern crate seed;
 use seed::prelude::*;
 use wasm_bindgen::prelude::*;
 
@@ -37,6 +35,8 @@ fn update(msg: Msg, model: Model) -> Model {
 // View
 
 fn view(model: Model) -> El<Msg> {
+    use seed::*;
+
     div![
         button![ 
             attrs!{"class" => "btn btn-light"},
