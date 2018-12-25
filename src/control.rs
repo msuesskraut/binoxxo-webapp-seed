@@ -1,6 +1,8 @@
 use binoxxo::field::Field;
 use crate::model::{Difficulty, Model};
 
+pub const DIFFICULTY_STORAGE : &'static str = "Binoxxo-Difficulty";
+
 #[derive(Clone, Debug)]
 pub struct CellPos {
     pub col: usize,
@@ -35,6 +37,11 @@ fn toggle_field(model: Model, pos: CellPos) -> Model {
 fn new_game(difficulty: Difficulty) -> Model {
     let model = Model::new(difficulty);
     seed::log!(model.board.to_string());
+    let storage = seed::storage::get_storage();
+    if let Some(storage) = storage {
+        seed::log!(format!("Store {} = {}", DIFFICULTY_STORAGE, difficulty));
+        seed::storage::store_data(&storage, DIFFICULTY_STORAGE, &difficulty);
+    }
     model
 }
 

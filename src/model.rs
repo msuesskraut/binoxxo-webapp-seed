@@ -1,9 +1,9 @@
 use binoxxo::field::{Board, Field};
 use binoxxo::bruteforce::create_puzzle_board;
 use std::fmt;
+use serde_derive::{Serialize, Deserialize};
 
-#[allow(dead_code)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Difficulty {
     Easy,
     Medium,
