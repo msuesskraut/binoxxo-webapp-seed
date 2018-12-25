@@ -2,11 +2,14 @@
 **/*.rs.bk
 Cargo.lock
 
-# Pycharm
-/.idea
+.sass-cache/
 
-pkg/*.wasm
-pkg/*.d.ts
-pkg/*.ts
-pkg/*.js
+dist/*.wasm
+dist/*.d.ts
+dist/*.ts
+dist/*.js
+dist/*.css
+dist/*.css.map
+dist/*.png
+dist/*.html
 wasm-pack.log
