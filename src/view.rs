@@ -183,7 +183,13 @@ pub fn view(model: Model) -> El<Message> {
             ],
             div![
                 attrs!{"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
-                view_new_game(model.difficulty)
+                view_new_game(model.difficulty),
+                h4!["Rules"],
+                ul![
+                    li!["Never more than two adjacent Xs or Os"],
+                    li!["Every row and column must contain the same number of Xs and Os"],
+                    li!["Every row and every column is unique"],
+                ]
             ]
         ]
     ]
