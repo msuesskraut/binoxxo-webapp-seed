@@ -107,7 +107,10 @@ fn view_board(model: &Model) -> El<Message> {
             };
 
             div![
-                attrs!{"class" => if valid { "alert alert-success" } else { "alert alert-danger" }},
+                attrs!{
+                    "class" => if valid { "alert alert-success" } else { "alert alert-danger" };
+                    "id" => "end-game-alert"
+                },
                 text
             ]
         } else {
@@ -136,7 +139,10 @@ fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
     use seed::*;
 
     vec!(
-        h4![format!("Difficulty: {}", difficulty)],
+        h4![
+            attrs!{"id" => "Difficulty-Display"},
+            format!("Difficulty: {}", difficulty)
+        ],
         div![
             attrs!{"class" => "dropdown"},
             button![
