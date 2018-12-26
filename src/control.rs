@@ -1,15 +1,15 @@
 use binoxxo::field::Field;
 use crate::model::{Difficulty, Model};
 
-pub const DIFFICULTY_STORAGE : &'static str = "Binoxxo-Difficulty";
+pub const DIFFICULTY_STORAGE : &str = "Binoxxo-Difficulty";
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct CellPos {
     pub col: usize,
     pub row: usize
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum Message {
     NewGame(Difficulty),
     Toggle(CellPos),
@@ -24,7 +24,7 @@ fn next_field(field: Field) -> Field {
     }
 }
 
-fn toggle_field(model: Model, pos: CellPos) -> Model {
+fn toggle_field(model: Model, pos: &CellPos) -> Model {
     let mut model = model; 
     let field = next_field(model.board.get(pos.col, pos.row));
     if field == Field::Empty {
@@ -64,7 +64,7 @@ pub fn update(message: Message, model: Model) -> Model {
     seed::log!(format!("Got {:?}", message));
 
     match message {
-        Message::Toggle(pos) => toggle_field(model, pos),
+        Message::Toggle(pos) => toggle_field(model, &pos),
         Message::NewGame(difficulty) => new_game(difficulty),
         Message::Clear => clear_board(model)
     }

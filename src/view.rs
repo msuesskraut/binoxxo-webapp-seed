@@ -169,6 +169,7 @@ fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
     )
 }
 
+#[allow(clippy::needless_pass_by_value)]  // signature required by seed
 pub fn view(model: Model) -> El<Message> {
     use seed::*;
 
@@ -184,7 +185,7 @@ pub fn view(model: Model) -> El<Message> {
         div![
             attrs!{"class" => "row"},
             div![
-                attrs!{"class" => "col-xs-8 col-sm-8 col-md-8 col-lg-8"},
+                attrs!{"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
                 view_board(&model)
             ],
             div![
