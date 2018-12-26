@@ -2,10 +2,10 @@ mod control;
 mod model;
 mod view;
 
-use wasm_bindgen::prelude::*;
-use crate::model::{Model, Difficulty};
 use crate::control::{update, DIFFICULTY_STORAGE};
+use crate::model::{Difficulty, Model};
 use crate::view::view;
+use wasm_bindgen::prelude::*;
 
 fn load_difficulty() -> Option<Difficulty> {
     if let Some(storage) = seed::storage::get_storage() {

@@ -1,13 +1,13 @@
-use binoxxo::field::{Board, Field};
 use binoxxo::bruteforce::create_puzzle_board;
+use binoxxo::field::{Board, Field};
+use serde_derive::{Deserialize, Serialize};
 use std::fmt;
-use serde_derive::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Difficulty {
     Easy,
     Medium,
-    Hard
+    Hard,
 }
 
 impl fmt::Display for Difficulty {
@@ -29,7 +29,7 @@ impl Default for Difficulty {
 #[derive(Clone, Debug)]
 pub struct Editable {
     editable: Vec<bool>,
-    size: usize
+    size: usize,
 }
 
 impl Editable {
@@ -43,22 +43,19 @@ impl Editable {
             }
         }
 
-        Editable {
-            editable,
-            size
-        }
+        Editable { editable, size }
     }
 
     pub fn is_editable(&self, x: usize, y: usize) -> bool {
         self.editable[x + self.size * y]
     }
 }
- 
+
 #[derive(Clone, Debug)]
 pub struct Model {
     pub difficulty: Difficulty,
     pub board: Board,
-    pub editable: Editable
+    pub editable: Editable,
 }
 
 impl Model {
@@ -75,7 +72,7 @@ impl Model {
         Model {
             difficulty,
             board,
-            editable
+            editable,
         }
     }
 

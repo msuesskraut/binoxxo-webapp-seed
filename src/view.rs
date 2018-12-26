@@ -1,7 +1,7 @@
+use crate::control::{CellPos, Message};
+use crate::model::*;
 use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid};
-use crate::model::*;
-use crate::control::{CellPos, Message};
 use seed::prelude::*;
 
 macro_rules! table {
@@ -46,10 +46,10 @@ fn view_field(field: Field) -> El<Message> {
     let classes = match field {
         Field::Empty => "fas fa-circle",
         Field::X => "fas fa-times",
-        Field::O => "far fa-circle"
+        Field::O => "far fa-circle",
     };
 
-    let mut i = i![attrs!{"class" => classes}];
+    let mut i = i![attrs! {"class" => classes}];
     if Field::Empty == field {
         i.add_style("font-size".into(), "20%".into());
     }
@@ -68,36 +68,30 @@ fn view_cell(model: &Model, col: usize, row: usize) -> El<Message> {
     let mut td = td![
         // id is required by engine for correct updates,
         // otherwise "board" gets randomized in NewGame (bug in seed?)
-        attrs!{"class" => class.to_string(); "id" => id },
-        style!{"width" => format!("{}%", 100.0 / (size as f64))},
+        attrs! {"class" => class.to_string(); "id" => id },
+        style! {"width" => format!("{}%", 100.0 / (size as f64))},
         view_field(field),
     ];
     if editable {
-        td.listeners.push(simple_ev("click", Message::Toggle(CellPos{col, row})));
+        td.listeners
+            .push(simple_ev("click", Message::Toggle(CellPos { col, row })));
     }
     td
 }
 
 fn view_row(model: &Model, row: usize) -> El<Message> {
     let size = model.get_size();
-    let cells: Vec<El<Message>> = (0..size)
-        .map(|col| view_cell(
-                model,
-                col,
-                row))
-        .collect();
+    let cells: Vec<El<Message>> = (0..size).map(|col| view_cell(model, col, row)).collect();
     tr![cells]
-} 
+}
 
 fn view_board(model: &Model) -> El<Message> {
     use seed::*;
 
     let size = model.get_size();
-    let rows: Vec<El<Message>> = (0..size)
-        .map(|row| view_row(model, row))
-        .collect();
+    let rows: Vec<El<Message>> = (0..size).map(|row| view_row(model, row)).collect();
     div![
-        attrs!{"id" => "board"},
+        attrs! {"id" => "board"},
         if is_board_full(&model.board) {
             let valid = is_board_valid(&model.board);
             let text = if valid {
@@ -107,7 +101,7 @@ fn view_board(model: &Model) -> El<Message> {
             };
 
             div![
-                attrs!{
+                attrs! {
                     "class" => if valid { "alert alert-success" } else { "alert alert-danger" };
                     "id" => "end-game-alert"
                 },
@@ -116,9 +110,7 @@ fn view_board(model: &Model) -> El<Message> {
         } else {
             seed::empty()
         },
-        table![
-            rows
-        ]
+        table![rows]
     ]
 }
 
@@ -126,7 +118,7 @@ fn view_difficulty(difficulty: Difficulty) -> El<Message> {
     use seed::*;
 
     a![
-        attrs!{
+        attrs! {
             "class" => "dropdown-item";
             "href" => "#";
         },
@@ -138,15 +130,15 @@ fn view_difficulty(difficulty: Difficulty) -> El<Message> {
 fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
     use seed::*;
 
-    vec!(
+    vec![
         h4![
-            attrs!{"id" => "Difficulty-Display"},
+            attrs! {"id" => "Difficulty-Display"},
             format!("Difficulty: {}", difficulty)
         ],
         div![
-            attrs!{"class" => "dropdown"},
+            attrs! {"class" => "dropdown"},
             button![
-                attrs!{
+                attrs! {
                     "class" => "btn btn-primary dropdown-toggle";
                     "type" => "button";
                     "id" => "New-Game-Difficulty";
@@ -157,7 +149,7 @@ fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
                 "New Game"
             ],
             div![
-                attrs!{
+                attrs! {
                     "class" => "dropdown-menu";
                     "aria-labelledby" => "New-Game-Difficulty";
                 },
@@ -166,32 +158,29 @@ fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
                 view_difficulty(Difficulty::Hard),
             ]
         ],
-    )
+    ]
 }
 
-#[allow(clippy::needless_pass_by_value)]  // signature required by seed
+#[allow(clippy::needless_pass_by_value)] // signature required by seed
 pub fn view(model: Model) -> El<Message> {
     use seed::*;
 
     div![
-        attrs!{"class" => "container"},
+        attrs! {"class" => "container"},
         div![
-            attrs!{"class" => "row"},
-            div![
-                attrs!{"class" => "col"},
-                h1![ "Let's play Binoxxo"]
-            ]
+            attrs! {"class" => "row"},
+            div![attrs! {"class" => "col"}, h1!["Let's play Binoxxo"]]
         ],
         div![
-            attrs!{"class" => "row"},
+            attrs! {"class" => "row"},
             div![
-                attrs!{"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
+                attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
                 view_board(&model)
             ],
             div![
-                attrs!{"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
+                attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
                 button![
-                    attrs!{
+                    attrs! {
                         "class" => "btn btn-secondary";
                         "id" => "clear-board"
                     },
