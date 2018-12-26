@@ -12,7 +12,8 @@ pub struct CellPos {
 #[derive(Clone, Debug)]
 pub enum Message {
     NewGame(Difficulty),
-    Toggle(CellPos)
+    Toggle(CellPos),
+    Clear
 }
 
 fn next_field(field: Field) -> Field {
@@ -45,11 +46,26 @@ fn new_game(difficulty: Difficulty) -> Model {
     model
 }
 
+fn clear_board(model: Model) -> Model {
+    let mut model = model;
+    let size = model.get_size();
+    for col in 0..size {
+        for row in 0..size {
+            if model.editable.is_editable(col, row) 
+                && Field::Empty != model.board.get(col, row) {
+                model.board.clear(col, row);
+            }
+        }
+    }
+    model
+}
+
 pub fn update(message: Message, model: Model) -> Model {
     seed::log!(format!("Got {:?}", message));
 
     match message {
         Message::Toggle(pos) => toggle_field(model, pos),
-        Message::NewGame(difficulty) => new_game(difficulty)
+        Message::NewGame(difficulty) => new_game(difficulty),
+        Message::Clear => clear_board(model)
     }
 }

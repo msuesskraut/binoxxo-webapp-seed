@@ -189,6 +189,14 @@ pub fn view(model: Model) -> El<Message> {
             ],
             div![
                 attrs!{"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
+                button![
+                    attrs!{
+                        "class" => "btn btn-secondary";
+                        "id" => "clear-board"
+                    },
+                    "Clear Board",
+                    simple_ev("click", Message::Clear)
+                ],
                 view_new_game(model.difficulty),
                 h4!["Rules"],
                 ul![
