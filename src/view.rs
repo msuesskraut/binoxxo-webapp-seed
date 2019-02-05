@@ -169,7 +169,20 @@ pub fn view(model: Model) -> El<Message> {
         attrs! {"class" => "container"},
         div![
             attrs! {"class" => "row"},
-            div![attrs! {"class" => "col"}, h1!["Let's play Binoxxo"]]
+            div![
+                attrs! {"class" => "col"},
+                div![
+                    attrs! {
+                        "class" => "language-switch";
+                        "data-toggle" => "tooltip";
+                        "data-placement" => "bottom";
+                        "title" => "Toggle Language: English <-> German";
+                    },
+                    i![attrs!{"class" => "fas fa-language"}],
+                    simple_ev("click", Message::ToggleLanguage),
+                ],
+                h1!["Let's play Binoxxo"],
+            ]
         ],
         div![
             attrs! {"class" => "row"},

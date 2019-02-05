@@ -14,6 +14,7 @@ pub enum Message {
     NewGame(Difficulty),
     Toggle(CellPos),
     Clear,
+    ToggleLanguage,
 }
 
 fn next_field(field: Field) -> Field {
@@ -66,5 +67,6 @@ pub fn update(message: Message, model: Model) -> Model {
         Message::Toggle(pos) => toggle_field(model, &pos),
         Message::NewGame(difficulty) => new_game(difficulty),
         Message::Clear => clear_board(model),
+        Message::ToggleLanguage => model,
     }
 }

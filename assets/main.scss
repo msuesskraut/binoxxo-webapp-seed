@@ -15,6 +15,13 @@ h1 {
     text-align: center;
 }
 
+.language-switch {
+    float: right;
+    font-size: 300%;
+    cursor: pointer;
+    color: lighten(black, 40%);
+}
+
 game-msg {
     margin-top:10px;
     margin-left:10px;
