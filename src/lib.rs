@@ -19,5 +19,7 @@ fn load_difficulty() -> Option<Difficulty> {
 #[wasm_bindgen]
 pub fn render() {
     let difficulty = load_difficulty().unwrap_or_default();
-    seed::run(Model::new(difficulty), update, view, "main", None);
+    seed::App::build(Model::new(difficulty), update, view)
+        .finish()
+        .run();
 }

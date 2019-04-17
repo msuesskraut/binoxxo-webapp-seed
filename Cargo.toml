@@ -12,7 +12,7 @@ repository = "https://github.com/msuesskraut/binoxxo-webapp-seed"
 crate-type = ["cdylib"]
 
 [dependencies]
-seed = "^0.1.12"
+seed = "^0.3.1"
 # note: wasm-bindgen 0.2.41 & 0.2.42 do not compile
 wasm-bindgen = "=0.2.40"
 web-sys = "=0.3.17"

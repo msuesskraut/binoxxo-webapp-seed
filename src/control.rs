@@ -1,5 +1,6 @@
 use crate::model::{Difficulty, Model};
 use binoxxo::field::Field;
+use seed::prelude::*;
 
 pub const DIFFICULTY_STORAGE: &str = "Binoxxo-Difficulty";
 
@@ -25,30 +26,29 @@ fn next_field(field: Field) -> Field {
     }
 }
 
-fn toggle_field(model: Model, pos: &CellPos) -> Model {
-    let mut model = model;
+fn toggle_field(model: &mut Model, pos: &CellPos) {
     let field = next_field(model.board.get(pos.col, pos.row));
     if field == Field::Empty {
         model.board.clear(pos.col, pos.row);
     } else {
         model.board.set(pos.col, pos.row, field);
     }
-    model
 }
 
-fn new_game(difficulty: Difficulty) -> Model {
-    let model = Model::new(difficulty);
+fn new_game(model: &mut Model, difficulty: Difficulty) {
     seed::log!(model.board.to_string());
     let storage = seed::storage::get_storage();
     if let Some(storage) = storage {
         seed::log!(format!("Store {} = {}", DIFFICULTY_STORAGE, difficulty));
         seed::storage::store_data(&storage, DIFFICULTY_STORAGE, &difficulty);
     }
-    model
+    let new_model = Model::new(difficulty);
+    model.board = new_model.board;
+    model.difficulty = new_model.difficulty;
+    model.editable = new_model.editable;
 }
 
-fn clear_board(model: Model) -> Model {
-    let mut model = model;
+fn clear_board(model: &mut Model) {
     let size = model.get_size();
     for col in 0..size {
         for row in 0..size {
@@ -57,16 +57,16 @@ fn clear_board(model: Model) -> Model {
             }
         }
     }
-    model
 }
 
-pub fn update(message: Message, model: Model) -> Model {
+pub fn update(message: Message, model: &mut Model) -> Update<Message> {
     seed::log!(format!("Got {:?}", message));
 
     match message {
         Message::Toggle(pos) => toggle_field(model, &pos),
-        Message::NewGame(difficulty) => new_game(difficulty),
+        Message::NewGame(difficulty) => new_game(model, difficulty),
         Message::Clear => clear_board(model),
-        Message::ToggleLanguage => model,
+        Message::ToggleLanguage => (),
     }
+    Render.into()
 }

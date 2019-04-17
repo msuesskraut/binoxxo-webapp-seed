@@ -4,6 +4,7 @@ use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid};
 use seed::prelude::*;
 
+/*
 macro_rules! table {
     ( $($part:expr),* $(,)* ) => {
         {
@@ -15,7 +16,7 @@ macro_rules! table {
         }
     };
 }
-
+*/
 macro_rules! tr {
     ( $($part:expr),* $(,)* ) => {
         {
@@ -28,6 +29,7 @@ macro_rules! tr {
     };
 }
 
+/*
 macro_rules! td {
     ( $($part:expr),* $(,)* ) => {
         {
@@ -39,6 +41,7 @@ macro_rules! td {
         }
     };
 }
+*/
 
 fn view_field(field: Field) -> El<Message> {
     use seed::*;
@@ -161,51 +164,52 @@ fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
     ]
 }
 
-#[allow(clippy::needless_pass_by_value)] // signature required by seed
-pub fn view(_ : seed::App<Message, Model>, model: Model) -> El<Message> {
+pub fn view(model: &Model) -> Vec<El<Message>> {
     use seed::*;
 
-    div![
-        attrs! {"class" => "container"},
+    vec![
         div![
-            attrs! {"class" => "row"},
+            attrs! {"class" => "container"},
             div![
-                attrs! {"class" => "col"},
+                attrs! {"class" => "row"},
                 div![
-                    attrs! {
-                        "class" => "language-switch";
-                        "data-toggle" => "tooltip";
-                        "data-placement" => "bottom";
-                        "title" => "Toggle Language: English <-> German";
-                    },
-                    i![attrs!{"class" => "fas fa-language"}],
-                    simple_ev("click", Message::ToggleLanguage),
-                ],
-                h1!["Let's play Binoxxo"],
-            ]
-        ],
-        div![
-            attrs! {"class" => "row"},
-            div![
-                attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
-                view_board(&model)
+                    attrs! {"class" => "col"},
+                    div![
+                        attrs! {
+                            "class" => "language-switch";
+                            "data-toggle" => "tooltip";
+                            "data-placement" => "bottom";
+                            "title" => "Toggle Language: English <-> German";
+                        },
+                        i![attrs!{"class" => "fas fa-language"}],
+                        simple_ev("click", Message::ToggleLanguage),
+                    ],
+                    h1!["Let's play Binoxxo"],
+                ]
             ],
             div![
-                attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
-                button![
-                    attrs! {
-                        "class" => "btn btn-secondary";
-                        "id" => "clear-board"
-                    },
-                    "Clear Board",
-                    simple_ev("click", Message::Clear)
+                attrs! {"class" => "row"},
+                div![
+                    attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
+                    view_board(&model)
                 ],
-                view_new_game(model.difficulty),
-                h4!["Rules"],
-                ul![
-                    li!["Never more than two adjacent Xs or Os"],
-                    li!["Every row and column must contain the same number of Xs and Os"],
-                    li!["Every row and every column is unique"],
+                div![
+                    attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
+                    button![
+                        attrs! {
+                            "class" => "btn btn-secondary";
+                            "id" => "clear-board"
+                        },
+                        "Clear Board",
+                        simple_ev("click", Message::Clear)
+                    ],
+                    view_new_game(model.difficulty),
+                    h4!["Rules"],
+                    ul![
+                        li!["Never more than two adjacent Xs or Os"],
+                        li!["Every row and column must contain the same number of Xs and Os"],
+                        li!["Every row and every column is unique"],
+                    ]
                 ]
             ]
         ]
