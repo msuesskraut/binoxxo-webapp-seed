@@ -162,7 +162,7 @@ fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
 }
 
 #[allow(clippy::needless_pass_by_value)] // signature required by seed
-pub fn view(model: Model) -> El<Message> {
+pub fn view(_ : seed::App<Message, Model>, model: Model) -> El<Message> {
     use seed::*;
 
     div![
