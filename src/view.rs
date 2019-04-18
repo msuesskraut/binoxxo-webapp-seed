@@ -4,19 +4,6 @@ use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid};
 use seed::prelude::*;
 
-/*
-macro_rules! table {
-    ( $($part:expr),* $(,)* ) => {
-        {
-            let mut el = El::empty(seed::dom_types::Tag::Table);
-            $ (
-                    $part.update(&mut el);
-            )*
-            el
-        }
-    };
-}
-*/
 macro_rules! tr {
     ( $($part:expr),* $(,)* ) => {
         {
@@ -28,20 +15,6 @@ macro_rules! tr {
         }
     };
 }
-
-/*
-macro_rules! td {
-    ( $($part:expr),* $(,)* ) => {
-        {
-            let mut el = El::empty(seed::dom_types::Tag::Td);
-            $ (
-                    $part.update(&mut el);
-            )*
-            el
-        }
-    };
-}
-*/
 
 fn view_field(field: Field) -> El<Message> {
     use seed::*;
