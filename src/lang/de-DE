@@ -1,0 +1,22 @@
+### message above game board
+game-won = Gewonnen!
+game-lost = Das passt noch nicht. Probiere es nochmals.
+
+### difficulty level
+difficulty-Easy = Leicht
+difficulty-Medium = Mittel
+difficulty-Hard = Sehr Schwierig
+
+difficulty-display = Schwierigkeit: { $difficulty }
+
+### buttons
+new-game = Neues Spiel
+language-toggle = Sprachumschaltung: Deutsch <-> Englisch
+clear-board = Grüne Felder löschen
+
+### general text
+header = Spiel Binoxxo
+rules-header = Regeln
+rule-1 = Niemals mehr als zwei benachbarte Xs oder Os
+rule-2 = Jede Zeile und jede Spalte müssen die gleiche Anzahl von Xs and Os enthalten
+rule-3 = Jede Zeile und jede Spalte kommt nur einmal vor

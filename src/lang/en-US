@@ -1,0 +1,22 @@
+### message above game board
+game-won = Success!
+game-lost = Sorry. Try again.
+
+### difficulty level
+difficulty-Easy = Easy
+difficulty-Medium = Medium
+difficulty-Hard = Hard
+
+difficulty-display = Difficulty: { $difficulty }
+
+### buttons
+new-game = New game
+language-toggle = Toggle Language: English <-> German
+clear-board = Clear Board
+
+### general text
+header = Let's play Binoxxo
+rules-header = rules
+rule-1 = Never more than two adjacent Xs or Os
+rule-2 = Every row and column must contain the same number of Xs and Os
+rule-3 = Every row and every column is unique
