@@ -7,11 +7,7 @@ difficulty-Easy = Leicht
 difficulty-Medium = Mittel
 difficulty-Hard = Schwierig
 
-difficulty-display = Schwierigkeit: { $difficulty ->
-    [Easy] Leicht
-    [Medium] Mittel
-    [Hard] Schwierig
-}
+difficulty-display = Schwierigkeit: {$difficulty}
 
 ### buttons
 new-game = Neues Spiel

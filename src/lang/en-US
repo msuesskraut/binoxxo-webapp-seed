@@ -7,7 +7,7 @@ difficulty-Easy = Easy
 difficulty-Medium = Medium
 difficulty-Hard = Hard
 
-difficulty-display = Difficulty: { $difficulty }
+difficulty-display = Difficulty: {$difficulty}
 
 ### buttons
 new-game = New game
@@ -16,7 +16,7 @@ clear-board = Clear Board
 
 ### general text
 header = Let's play Binoxxo
-rules-header = rules
+rules-header = Rules
 rule-1 = Never more than two adjacent Xs or Os
 rule-2 = Every row and column must contain the same number of Xs and Os
 rule-3 = Every row and every column is unique

@@ -52,16 +52,51 @@ impl Editable {
     }
 }
 
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub enum Language {
+    DeDe,
+    EnUs,
+}
+
+impl Default for Language {
+    fn default() -> Self {
+        Language::EnUs
+    }
+}
+
+impl ToString for Language {
+    fn to_string(&self) -> String {
+        use Language::*;
+
+        match self {
+            DeDe => "de-DE".to_string(),
+            EnUs => "en-US".to_string(),
+        }
+    }
+}
+
+impl Language {
+    pub fn next(self) -> Self {
+        use Language::*;
+
+        match self {
+            DeDe => EnUs,
+            EnUs => DeDe,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Model {
     pub difficulty: Difficulty,
     pub board: Board,
     pub editable: Editable,
     pub res_mgr: ResourceManager,
+    pub language: Language,
 }
 
 impl Model {
-    pub fn new(difficulty: Difficulty) -> Model {
+    pub fn new(difficulty: Difficulty, language: Language) -> Model {
         let (size, guesses) = match difficulty {
             Difficulty::Easy => (6, 5),
             Difficulty::Medium => (8, 10),
@@ -77,6 +112,7 @@ impl Model {
             board,
             editable,
             res_mgr,
+            language,
         }
     }
 
@@ -87,6 +123,6 @@ impl Model {
 
 impl Default for Model {
     fn default() -> Self {
-        Model::new(Difficulty::default())
+        Model::new(Difficulty::default(), Language::default())
     }
 }

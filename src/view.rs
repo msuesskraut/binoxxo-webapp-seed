@@ -24,7 +24,7 @@ struct ViewBuilder<'a> {
 
 impl<'a> ViewBuilder<'a> {
     fn tr(&self, id: &str) -> String {
-        self.bundle.format(id, None).unwrap().0
+        self.bundle.format(id, None).expect(&format!("tr({}) failed", id)).0
     }
 
     fn view_field(&self, field: Field) -> El<Message> {
@@ -117,18 +117,23 @@ impl<'a> ViewBuilder<'a> {
     fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
         use seed::*;
         let mut difficulty_arg = HashMap::new();
-        difficulty_arg.insert("difficulty", FluentValue::String(format!("{}", difficulty)));
+        difficulty_arg.insert("difficulty", FluentValue::String(self.tr(&format!("difficulty-{}", difficulty))));
 
-        vec![
+        seed::log(format!("display difficulty = {}", difficulty));
+        seed::log(format!("  has new-game: {}", self.bundle.has_message("new-game")));
+        seed::log(format!("  has difficulty-display: {}", self.bundle.has_message("difficulty-dislay")));
+        let text = 
+                self.bundle
+                    .format("difficulty-display", Some(&difficulty_arg));
+        seed::log(format!("  text = {:#?}", text));
+        let diff_header = 
             h4![
                 attrs! {"id" => "Difficulty-Display"},
-                self.bundle
-                    .format("difficulty-diplay", Some(&difficulty_arg))
-                    .unwrap()
+                text.expect(&format!("tr(difficulty-display[difficulty = {}]) failed", difficulty))
                     .0
-            ],
-            div![
-                attrs! {"class" => "dropdown"},
+            ];
+        seed::log("display new-game button");
+        let new_game_button = 
                 button![
                     attrs! {
                         "class" => "btn btn-primary dropdown-toggle";
@@ -139,7 +144,9 @@ impl<'a> ViewBuilder<'a> {
                         "aria-expanded" => "false";
                     },
                     self.tr("new-game")
-                ],
+                ];
+        seed::log("display new-game levels");
+        let new_game_levels = 
                 div![
                     attrs! {
                         "class" => "dropdown-menu";
@@ -148,7 +155,15 @@ impl<'a> ViewBuilder<'a> {
                     self.view_difficulty(Difficulty::Easy),
                     self.view_difficulty(Difficulty::Medium),
                     self.view_difficulty(Difficulty::Hard),
-                ]
+                ];
+
+        seed::log("display new-game combine");
+        vec![
+            diff_header,
+            div![
+                attrs! {"class" => "dropdown"},
+                new_game_button,
+                new_game_levels,
             ],
         ]
     }
@@ -156,8 +171,8 @@ impl<'a> ViewBuilder<'a> {
     pub fn view(&self) -> Vec<El<Message>> {
         use seed::*;
 
-        vec![div![
-            attrs! {"class" => "container"},
+        seed::log("before header");
+        let header =
             div![
                 attrs! {"class" => "row"},
                 div![
@@ -167,20 +182,22 @@ impl<'a> ViewBuilder<'a> {
                             "class" => "language-switch";
                             "data-toggle" => "tooltip";
                             "data-placement" => "bottom";
-                            "title" => "Toggle Language: English <-> German";
+                            "title" => self.tr("language-toggle");
                         },
                         i![attrs! {"class" => "fas fa-language"}],
                         simple_ev("click", Message::ToggleLanguage),
                     ],
                     h1![self.tr("header")],
                 ]
-            ],
-            div![
-                attrs! {"class" => "row"},
+            ];
+        seed::log("view before board");
+        let board =
                 div![
                     attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
                     self.view_board()
-                ],
+                ];
+        seed::log("view before controls");
+        let controls =
                 div![
                     attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
                     button![
@@ -198,7 +215,15 @@ impl<'a> ViewBuilder<'a> {
                         li![self.tr("rule-2")],
                         li![self.tr("rule-3")],
                     ]
-                ]
+                ];
+        seed::log("view before combine");
+        vec![div![
+            attrs! {"class" => "container"},
+            header,
+            div![
+                attrs! {"class" => "row"},
+                board,
+                controls
             ]
         ]]
     }
@@ -206,7 +231,7 @@ impl<'a> ViewBuilder<'a> {
 
 fn build_view<'a>(model: &'a Model) -> ViewBuilder<'a> {
     ViewBuilder {
-        bundle: model.res_mgr.get_bundle("en-US"),
+        bundle: model.res_mgr.get_bundle(&model.language.to_string()),
         model,
     }
 }

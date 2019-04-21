@@ -3,6 +3,7 @@ use binoxxo::field::Field;
 use seed::prelude::*;
 
 pub const DIFFICULTY_STORAGE: &str = "Binoxxo-Difficulty";
+pub const LANGUAGE_STORAGE: &str = "Binoxxo-Language";
 
 #[derive(Clone, Copy, Debug)]
 pub struct CellPos {
@@ -42,7 +43,7 @@ fn new_game(model: &mut Model, difficulty: Difficulty) {
         seed::log!(format!("Store {} = {}", DIFFICULTY_STORAGE, difficulty));
         seed::storage::store_data(&storage, DIFFICULTY_STORAGE, &difficulty);
     }
-    let new_model = Model::new(difficulty);
+    let new_model = Model::new(difficulty, model.language);
     model.board = new_model.board;
     model.difficulty = new_model.difficulty;
     model.editable = new_model.editable;
@@ -59,6 +60,15 @@ fn clear_board(model: &mut Model) {
     }
 }
 
+fn change_language(model: &mut Model) {
+    model.language = model.language.next();
+    let storage = seed::storage::get_storage();
+    if let Some(storage) = storage {
+        seed::log!(format!("Store {} = {}", LANGUAGE_STORAGE, model.language.to_string()));
+        seed::storage::store_data(&storage, LANGUAGE_STORAGE, &model.language);
+    }
+}
+
 pub fn update(message: Message, model: &mut Model) -> Update<Message> {
     seed::log!(format!("Got {:?}", message));
 
@@ -66,7 +76,7 @@ pub fn update(message: Message, model: &mut Model) -> Update<Message> {
         Message::Toggle(pos) => toggle_field(model, &pos),
         Message::NewGame(difficulty) => new_game(model, difficulty),
         Message::Clear => clear_board(model),
-        Message::ToggleLanguage => (),
+        Message::ToggleLanguage => change_language(model),
     }
     Render.into()
 }
