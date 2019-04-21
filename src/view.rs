@@ -3,6 +3,7 @@ use crate::model::*;
 use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid};
 use seed::prelude::*;
+use fluent_bundle::{FluentBundle, FluentValue};
 
 macro_rules! tr {
     ( $($part:expr),* $(,)* ) => {
@@ -16,175 +17,200 @@ macro_rules! tr {
     };
 }
 
-fn view_field(field: Field) -> El<Message> {
-    use seed::*;
+struct ViewBuilder<'a> {
+    bundle: FluentBundle<'a>,
+    model: &'a Model,
+}
 
-    let classes = match field {
-        Field::Empty => "fas fa-circle",
-        Field::X => "fas fa-times",
-        Field::O => "far fa-circle",
-    };
-
-    let mut i = i![attrs! {"class" => classes}];
-    if Field::Empty == field {
-        i.add_style("font-size".into(), "20%".into());
+impl<'a> ViewBuilder<'a> {
+    fn tr(&self, id: &str) -> String {
+        self.bundle.format(id, None).unwrap().0
     }
-    i
-}
 
-fn view_cell(model: &Model, col: usize, row: usize) -> El<Message> {
-    use seed::*;
+    fn view_field(&self, field: Field) -> El<Message> {
+        use seed::*;
 
-    let field = model.board.get(col, row);
-    let editable = model.editable.is_editable(col, row);
-    let class = if editable { "guess" } else { "" };
-    let id = format!("cell-{}-{}", col, row);
-    let size = model.get_size();
+        let classes = match field {
+            Field::Empty => "fas fa-circle",
+            Field::X => "fas fa-times",
+            Field::O => "far fa-circle",
+        };
 
-    let mut td = td![
-        // id is required by engine for correct updates,
-        // otherwise "board" gets randomized in NewGame (bug in seed?)
-        attrs! {"class" => class.to_string(); "id" => id },
-        style! {"width" => format!("{}%", 100.0 / (size as f64))},
-        view_field(field),
-    ];
-    if editable {
-        td.listeners
-            .push(simple_ev("click", Message::Toggle(CellPos { col, row })));
+        let mut i = i![attrs! {"class" => classes}];
+        if Field::Empty == field {
+            i.add_style("font-size".into(), "20%".into());
+        }
+        i
     }
-    td
-}
 
-fn view_row(model: &Model, row: usize) -> El<Message> {
-    let size = model.get_size();
-    let cells: Vec<El<Message>> = (0..size).map(|col| view_cell(model, col, row)).collect();
-    tr![cells]
-}
+    fn view_cell(&self, col: usize, row: usize) -> El<Message> {
+        use seed::*;
 
-fn view_board(model: &Model) -> El<Message> {
-    use seed::*;
+        let field = self.model.board.get(col, row);
+        let editable = self.model.editable.is_editable(col, row);
+        let class = if editable { "guess" } else { "" };
+        let id = format!("cell-{}-{}", col, row);
+        let size = self.model.get_size();
 
-    let size = model.get_size();
-    let rows: Vec<El<Message>> = (0..size).map(|row| view_row(model, row)).collect();
-    div![
-        attrs! {"id" => "board"},
-        if is_board_full(&model.board) {
-            let valid = is_board_valid(&model.board);
-            let text = if valid {
-                "Success!"
-            } else {
-                "Sorry. Try again."
-            };
+        let mut td = td![
+            // id is required by engine for correct updates,
+            // otherwise "board" gets randomized in NewGame (bug in seed?)
+            attrs! {"class" => class.to_string(); "id" => id },
+            style! {"width" => format!("{}%", 100.0 / (size as f64))},
+            self.view_field(field),
+        ];
+        if editable {
+            td.listeners
+                .push(simple_ev("click", Message::Toggle(CellPos { col, row })));
+        }
+        td
+    }
 
-            div![
-                attrs! {
-                    "class" => if valid { "alert alert-success" } else { "alert alert-danger" };
-                    "id" => "end-game-alert"
-                },
-                text
-            ]
-        } else {
-            seed::empty()
-        },
-        table![rows]
-    ]
-}
+    fn view_row(&self, row: usize) -> El<Message> {
+        let size = self.model.get_size();
+        let cells: Vec<El<Message>> = (0..size).map(|col| self.view_cell(col, row)).collect();
+        tr![cells]
+    }
 
-fn view_difficulty(difficulty: Difficulty) -> El<Message> {
-    use seed::*;
+    fn view_board(&self) -> El<Message> {
+        use seed::*;
 
-    a![
-        attrs! {
-            "class" => "dropdown-item";
-            "href" => "#";
-        },
-        format!("{}", difficulty),
-        simple_ev("click", Message::NewGame(difficulty))
-    ]
-}
-
-fn view_new_game(difficulty: Difficulty) -> Vec<El<Message>> {
-    use seed::*;
-
-    vec![
-        h4![
-            attrs! {"id" => "Difficulty-Display"},
-            format!("Difficulty: {}", difficulty)
-        ],
+        let size = self.model.get_size();
+        let rows: Vec<El<Message>> = (0..size).map(|row| self.view_row(row)).collect();
         div![
-            attrs! {"class" => "dropdown"},
-            button![
-                attrs! {
-                    "class" => "btn btn-primary dropdown-toggle";
-                    "type" => "button";
-                    "id" => "New-Game-Difficulty";
-                    "data-toggle" => "dropdown";
-                    "aria-haspopup" => "true";
-                    "aria-expanded" => "false";
-                },
-                "New Game"
-            ],
-            div![
-                attrs! {
-                    "class" => "dropdown-menu";
-                    "aria-labelledby" => "New-Game-Difficulty";
-                },
-                view_difficulty(Difficulty::Easy),
-                view_difficulty(Difficulty::Medium),
-                view_difficulty(Difficulty::Hard),
-            ]
-        ],
-    ]
-}
+            attrs! {"id" => "board"},
+            if is_board_full(&self.model.board) {
+                let valid = is_board_valid(&self.model.board);
+                let text = if valid {
+                    self.tr("game-won")
+                } else {
+                    self.tr("game-lost")
+                };
 
-pub fn view(model: &Model) -> Vec<El<Message>> {
-    use seed::*;
-
-    vec![
-        div![
-            attrs! {"class" => "container"},
-            div![
-                attrs! {"class" => "row"},
                 div![
-                    attrs! {"class" => "col"},
-                    div![
-                        attrs! {
-                            "class" => "language-switch";
-                            "data-toggle" => "tooltip";
-                            "data-placement" => "bottom";
-                            "title" => "Toggle Language: English <-> German";
-                        },
-                        i![attrs!{"class" => "fas fa-language"}],
-                        simple_ev("click", Message::ToggleLanguage),
-                    ],
-                    h1!["Let's play Binoxxo"],
+                    attrs! {
+                        "class" => if valid { "alert alert-success" } else { "alert alert-danger" };
+                        "id" => "end-game-alert"
+                    },
+                    text
                 ]
+            } else {
+                seed::empty()
+            },
+            table![rows]
+        ]
+    }
+
+    fn view_difficulty(&self, difficulty: Difficulty) -> El<Message> {
+        use seed::*;
+
+        a![
+            attrs! {
+                "class" => "dropdown-item";
+                "href" => "#";
+            },
+            self.tr(&format!("difficulty-{}", difficulty)),
+            simple_ev("click", Message::NewGame(difficulty))
+        ]
+    }
+
+    fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
+        use seed::*;
+        let mut difficulty_arg = HashMap::new();
+        difficulty_arg.insert("difficulty", FluentValue::String(format!("{}", difficulty)));
+
+        vec![
+            h4![
+                attrs! {"id" => "Difficulty-Display"},
+                self.bundle.format("difficulty-diplay", Some(&difficulty_arg)).unwrap().0 
             ],
             div![
-                attrs! {"class" => "row"},
-                div![
-                    attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
-                    view_board(&model)
+                attrs! {"class" => "dropdown"},
+                button![
+                    attrs! {
+                        "class" => "btn btn-primary dropdown-toggle";
+                        "type" => "button";
+                        "id" => "New-Game-Difficulty";
+                        "data-toggle" => "dropdown";
+                        "aria-haspopup" => "true";
+                        "aria-expanded" => "false";
+                    },
+                    self.tr("new-game")
                 ],
                 div![
-                    attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
-                    button![
-                        attrs! {
-                            "class" => "btn btn-secondary";
-                            "id" => "clear-board"
-                        },
-                        "Clear Board",
-                        simple_ev("click", Message::Clear)
+                    attrs! {
+                        "class" => "dropdown-menu";
+                        "aria-labelledby" => "New-Game-Difficulty";
+                    },
+                    self.view_difficulty(Difficulty::Easy),
+                    self.view_difficulty(Difficulty::Medium),
+                    self.view_difficulty(Difficulty::Hard),
+                ]
+            ],
+        ]
+    }
+
+    pub fn view(&self) -> Vec<El<Message>> {
+        use seed::*;
+
+        vec![
+            div![
+                attrs! {"class" => "container"},
+                div![
+                    attrs! {"class" => "row"},
+                    div![
+                        attrs! {"class" => "col"},
+                        div![
+                            attrs! {
+                                "class" => "language-switch";
+                                "data-toggle" => "tooltip";
+                                "data-placement" => "bottom";
+                                "title" => "Toggle Language: English <-> German";
+                            },
+                            i![attrs!{"class" => "fas fa-language"}],
+                            simple_ev("click", Message::ToggleLanguage),
+                        ],
+                        h1![self.tr("header")],
+                    ]
+                ],
+                div![
+                    attrs! {"class" => "row"},
+                    div![
+                        attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
+                        self.view_board()
                     ],
-                    view_new_game(model.difficulty),
-                    h4!["Rules"],
-                    ul![
-                        li!["Never more than two adjacent Xs or Os"],
-                        li!["Every row and column must contain the same number of Xs and Os"],
-                        li!["Every row and every column is unique"],
+                    div![
+                        attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
+                        button![
+                            attrs! {
+                                "class" => "btn btn-secondary";
+                                "id" => "clear-board"
+                            },
+                            self.tr("clear-board"),
+                            simple_ev("click", Message::Clear)
+                        ],
+                        self.view_new_game(self.model.difficulty),
+                        h4![self.tr("rules-header")],
+                        ul![
+                            li![self.tr("rule-1")],
+                            li![self.tr("rule-2")],
+                            li![self.tr("rule-3")],
+                        ]
                     ]
                 ]
             ]
         ]
-    ]
+    }
+}
+
+fn build_view<'a>(model: &'a Model) -> ViewBuilder<'a> {
+    ViewBuilder {
+        bundle: model.res_mgr.get_bundle("en-US"),
+        model
+    }
+}
+
+pub fn view(model: &Model) -> Vec<El<Message>> {
+    let vb = build_view(model);
+    vb.view()
 }

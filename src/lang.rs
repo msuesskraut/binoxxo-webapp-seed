@@ -16,6 +16,12 @@ pub struct ResourceManager {
     resources: FrozenMap<String, Box<FluentResource>>,
 }
 
+impl std::fmt::Debug for ResourceManager {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "ResourceManager {{}}")
+    } 
+}
+
 impl ResourceManager {
     pub fn new() -> Self {
         ResourceManager {
@@ -44,6 +50,7 @@ impl ResourceManager {
     }
 }
 
+#[cfg(test)]
 mod test {
     use super::*;
 

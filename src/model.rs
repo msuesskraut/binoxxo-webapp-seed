@@ -1,3 +1,4 @@
+use crate::lang::ResourceManager;
 use binoxxo::bruteforce::create_puzzle_board;
 use binoxxo::field::{Board, Field};
 use serde_derive::{Deserialize, Serialize};
@@ -51,11 +52,12 @@ impl Editable {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Model {
     pub difficulty: Difficulty,
     pub board: Board,
     pub editable: Editable,
+    pub res_mgr: ResourceManager,
 }
 
 impl Model {
@@ -68,11 +70,13 @@ impl Model {
 
         let board = create_puzzle_board(size, guesses);
         let editable = Editable::new(&board);
+        let res_mgr = ResourceManager::new();
 
         Model {
             difficulty,
             board,
             editable,
+            res_mgr,
         }
     }
 
