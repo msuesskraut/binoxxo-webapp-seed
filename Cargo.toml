@@ -17,7 +17,9 @@ seed = "^0.3.1"
 wasm-bindgen = "=0.2.40"
 web-sys = "=0.3.17"
 binoxxo = { version = "^0.1.8", features = ["wasm-bindgen"] }
-fluent = "0.6.0"
+fluent-bundle = "0.6.0"
+elsa = "1.0.2"
+lazy_static = "1.3.0"
 
 # For serialization, eg sending requests to a server. Otherwise, not required.
 serde = "^1.0.90"

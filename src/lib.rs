@@ -1,4 +1,5 @@
 mod control;
+mod lang;
 mod model;
 mod view;
 
