@@ -5,9 +5,13 @@ game-lost = Das passt noch nicht. Probiere es nochmals.
 ### difficulty level
 difficulty-Easy = Leicht
 difficulty-Medium = Mittel
-difficulty-Hard = Sehr Schwierig
+difficulty-Hard = Schwierig
 
-difficulty-display = Schwierigkeit: { $difficulty }
+difficulty-display = Schwierigkeit: { $difficulty ->
+    [Easy] Leicht
+    [Medium] Mittel
+    [Hard] Schwierig
+}
 
 ### buttons
 new-game = Neues Spiel
