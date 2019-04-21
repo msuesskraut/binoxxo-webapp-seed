@@ -2,8 +2,8 @@ use crate::control::{CellPos, Message};
 use crate::model::*;
 use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid};
-use seed::prelude::*;
 use fluent_bundle::{FluentBundle, FluentValue};
+use seed::prelude::*;
 
 macro_rules! tr {
     ( $($part:expr),* $(,)* ) => {
@@ -122,7 +122,10 @@ impl<'a> ViewBuilder<'a> {
         vec![
             h4![
                 attrs! {"id" => "Difficulty-Display"},
-                self.bundle.format("difficulty-diplay", Some(&difficulty_arg)).unwrap().0 
+                self.bundle
+                    .format("difficulty-diplay", Some(&difficulty_arg))
+                    .unwrap()
+                    .0
             ],
             div![
                 attrs! {"class" => "dropdown"},
@@ -153,60 +156,58 @@ impl<'a> ViewBuilder<'a> {
     pub fn view(&self) -> Vec<El<Message>> {
         use seed::*;
 
-        vec![
+        vec![div![
+            attrs! {"class" => "container"},
             div![
-                attrs! {"class" => "container"},
+                attrs! {"class" => "row"},
                 div![
-                    attrs! {"class" => "row"},
+                    attrs! {"class" => "col"},
                     div![
-                        attrs! {"class" => "col"},
-                        div![
-                            attrs! {
-                                "class" => "language-switch";
-                                "data-toggle" => "tooltip";
-                                "data-placement" => "bottom";
-                                "title" => "Toggle Language: English <-> German";
-                            },
-                            i![attrs!{"class" => "fas fa-language"}],
-                            simple_ev("click", Message::ToggleLanguage),
-                        ],
-                        h1![self.tr("header")],
-                    ]
+                        attrs! {
+                            "class" => "language-switch";
+                            "data-toggle" => "tooltip";
+                            "data-placement" => "bottom";
+                            "title" => "Toggle Language: English <-> German";
+                        },
+                        i![attrs! {"class" => "fas fa-language"}],
+                        simple_ev("click", Message::ToggleLanguage),
+                    ],
+                    h1![self.tr("header")],
+                ]
+            ],
+            div![
+                attrs! {"class" => "row"},
+                div![
+                    attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
+                    self.view_board()
                 ],
                 div![
-                    attrs! {"class" => "row"},
-                    div![
-                        attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
-                        self.view_board()
+                    attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
+                    button![
+                        attrs! {
+                            "class" => "btn btn-secondary";
+                            "id" => "clear-board"
+                        },
+                        self.tr("clear-board"),
+                        simple_ev("click", Message::Clear)
                     ],
-                    div![
-                        attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
-                        button![
-                            attrs! {
-                                "class" => "btn btn-secondary";
-                                "id" => "clear-board"
-                            },
-                            self.tr("clear-board"),
-                            simple_ev("click", Message::Clear)
-                        ],
-                        self.view_new_game(self.model.difficulty),
-                        h4![self.tr("rules-header")],
-                        ul![
-                            li![self.tr("rule-1")],
-                            li![self.tr("rule-2")],
-                            li![self.tr("rule-3")],
-                        ]
+                    self.view_new_game(self.model.difficulty),
+                    h4![self.tr("rules-header")],
+                    ul![
+                        li![self.tr("rule-1")],
+                        li![self.tr("rule-2")],
+                        li![self.tr("rule-3")],
                     ]
                 ]
             ]
-        ]
+        ]]
     }
 }
 
 fn build_view<'a>(model: &'a Model) -> ViewBuilder<'a> {
     ViewBuilder {
         bundle: model.res_mgr.get_bundle("en-US"),
-        model
+        model,
     }
 }
 

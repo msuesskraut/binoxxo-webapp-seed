@@ -1,7 +1,7 @@
-use fluent_bundle::{FluentBundle, FluentResource};
 use elsa::FrozenMap;
-use std::collections::HashMap;
+use fluent_bundle::{FluentBundle, FluentResource};
 use lazy_static::lazy_static;
+use std::collections::HashMap;
 
 lazy_static! {
     static ref LANG_RESOURCES: HashMap<&'static str, &'static str> = {
@@ -19,7 +19,7 @@ pub struct ResourceManager {
 impl std::fmt::Debug for ResourceManager {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "ResourceManager {{}}")
-    } 
+    }
 }
 
 impl ResourceManager {
