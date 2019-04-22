@@ -1,0 +1,36 @@
+[tasks.build]
+description = "Build complete Binoxxo into dist"
+dependencies = [
+    "build_wasm",
+    "build_css",
+    "build_assets"
+]
+
+[tasks.build_wasm]
+description = "Build with wasm-pack"
+install_crate = "wasm-pack"
+command = "wasm-pack"
+args = ["build", "--target", "no-modules", "--out-name", "binoxxo_webapp_seed", "--out-dir", "./dist"]
+
+[tasks.build_css]
+description = "Build css from template"
+install_crate = "rsass"
+install_crate_args = ["--bin", "rsass", "--features=commandline"]
+command = "rsass"
+args = ["./assets/main.scss"]
+
+[tasks.build_assets]
+description = "Copy assets into dist dir"
+script = [
+    '''
+    cp index.html ./dist
+    cp assets/favicon.png ./dist
+    '''
+]
+
+[tasks.serve]
+description = "Start server for given example"
+install_crate = { crate_name = "https", binary = "http", test_arg = "--help" }
+workspace = false
+command = "http"
+args = ["./dist"]
