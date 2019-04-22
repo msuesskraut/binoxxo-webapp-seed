@@ -168,7 +168,7 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    pub fn view(&self) -> Vec<El<Message>> {
+    pub fn view(&self) -> El<Message> {
         use seed::*;
 
         seed::log("before header");
@@ -217,7 +217,7 @@ impl<'a> ViewBuilder<'a> {
                     ]
                 ];
         seed::log("view before combine");
-        vec![div![
+        div![
             attrs! {"class" => "container"},
             header,
             div![
@@ -225,7 +225,7 @@ impl<'a> ViewBuilder<'a> {
                 board,
                 controls
             ]
-        ]]
+        ]
     }
 }
 
@@ -236,7 +236,7 @@ fn build_view<'a>(model: &'a Model) -> ViewBuilder<'a> {
     }
 }
 
-pub fn view(model: &Model) -> Vec<El<Message>> {
+pub fn view(model: &Model) -> impl ElContainer<Message> {
     let vb = build_view(model);
     vb.view()
 }
