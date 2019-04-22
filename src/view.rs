@@ -24,7 +24,10 @@ struct ViewBuilder<'a> {
 
 impl<'a> ViewBuilder<'a> {
     fn tr(&self, id: &str) -> String {
-        self.bundle.format(id, None).expect(&format!("tr({}) failed", id)).0
+        self.bundle
+            .format(id, None)
+            .expect(&format!("tr({}) failed", id))
+            .0
     }
 
     fn view_field(&self, field: Field) -> El<Message> {
@@ -117,45 +120,54 @@ impl<'a> ViewBuilder<'a> {
     fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
         use seed::*;
         let mut difficulty_arg = HashMap::new();
-        difficulty_arg.insert("difficulty", FluentValue::String(self.tr(&format!("difficulty-{}", difficulty))));
+        difficulty_arg.insert(
+            "difficulty",
+            FluentValue::String(self.tr(&format!("difficulty-{}", difficulty))),
+        );
 
         seed::log(format!("display difficulty = {}", difficulty));
-        seed::log(format!("  has new-game: {}", self.bundle.has_message("new-game")));
-        seed::log(format!("  has difficulty-display: {}", self.bundle.has_message("difficulty-dislay")));
-        let text = 
-                self.bundle
-                    .format("difficulty-display", Some(&difficulty_arg));
+        seed::log(format!(
+            "  has new-game: {}",
+            self.bundle.has_message("new-game")
+        ));
+        seed::log(format!(
+            "  has difficulty-display: {}",
+            self.bundle.has_message("difficulty-dislay")
+        ));
+        let text = self
+            .bundle
+            .format("difficulty-display", Some(&difficulty_arg));
         seed::log(format!("  text = {:#?}", text));
-        let diff_header = 
-            h4![
-                attrs! {"id" => "Difficulty-Display"},
-                text.expect(&format!("tr(difficulty-display[difficulty = {}]) failed", difficulty))
-                    .0
-            ];
+        let diff_header = h4![
+            attrs! {"id" => "Difficulty-Display"},
+            text.expect(&format!(
+                "tr(difficulty-display[difficulty = {}]) failed",
+                difficulty
+            ))
+            .0
+        ];
         seed::log("display new-game button");
-        let new_game_button = 
-                button![
-                    attrs! {
-                        "class" => "btn btn-primary dropdown-toggle";
-                        "type" => "button";
-                        "id" => "New-Game-Difficulty";
-                        "data-toggle" => "dropdown";
-                        "aria-haspopup" => "true";
-                        "aria-expanded" => "false";
-                    },
-                    self.tr("new-game")
-                ];
+        let new_game_button = button![
+            attrs! {
+                "class" => "btn btn-primary dropdown-toggle";
+                "type" => "button";
+                "id" => "New-Game-Difficulty";
+                "data-toggle" => "dropdown";
+                "aria-haspopup" => "true";
+                "aria-expanded" => "false";
+            },
+            self.tr("new-game")
+        ];
         seed::log("display new-game levels");
-        let new_game_levels = 
-                div![
-                    attrs! {
-                        "class" => "dropdown-menu";
-                        "aria-labelledby" => "New-Game-Difficulty";
-                    },
-                    self.view_difficulty(Difficulty::Easy),
-                    self.view_difficulty(Difficulty::Medium),
-                    self.view_difficulty(Difficulty::Hard),
-                ];
+        let new_game_levels = div![
+            attrs! {
+                "class" => "dropdown-menu";
+                "aria-labelledby" => "New-Game-Difficulty";
+            },
+            self.view_difficulty(Difficulty::Easy),
+            self.view_difficulty(Difficulty::Medium),
+            self.view_difficulty(Difficulty::Hard),
+        ];
 
         seed::log("display new-game combine");
         vec![
@@ -172,59 +184,52 @@ impl<'a> ViewBuilder<'a> {
         use seed::*;
 
         seed::log("before header");
-        let header =
+        let header = div![
+            attrs! {"class" => "row"},
             div![
-                attrs! {"class" => "row"},
+                attrs! {"class" => "col"},
                 div![
-                    attrs! {"class" => "col"},
-                    div![
-                        attrs! {
-                            "class" => "language-switch";
-                            "data-toggle" => "tooltip";
-                            "data-placement" => "bottom";
-                            "title" => self.tr("language-toggle");
-                        },
-                        i![attrs! {"class" => "fas fa-language"}],
-                        simple_ev("click", Message::ToggleLanguage),
-                    ],
-                    h1![self.tr("header")],
-                ]
-            ];
+                    attrs! {
+                        "class" => "language-switch";
+                        "data-toggle" => "tooltip";
+                        "data-placement" => "bottom";
+                        "title" => self.tr("language-toggle");
+                    },
+                    i![attrs! {"class" => "fas fa-language"}],
+                    simple_ev("click", Message::ToggleLanguage),
+                ],
+                h1![self.tr("header")],
+            ]
+        ];
         seed::log("view before board");
-        let board =
-                div![
-                    attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
-                    self.view_board()
-                ];
+        let board = div![
+            attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
+            self.view_board()
+        ];
         seed::log("view before controls");
-        let controls =
-                div![
-                    attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
-                    button![
-                        attrs! {
-                            "class" => "btn btn-secondary";
-                            "id" => "clear-board"
-                        },
-                        self.tr("clear-board"),
-                        simple_ev("click", Message::Clear)
-                    ],
-                    self.view_new_game(self.model.difficulty),
-                    h4![self.tr("rules-header")],
-                    ul![
-                        li![self.tr("rule-1")],
-                        li![self.tr("rule-2")],
-                        li![self.tr("rule-3")],
-                    ]
-                ];
+        let controls = div![
+            attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
+            button![
+                attrs! {
+                    "class" => "btn btn-secondary";
+                    "id" => "clear-board"
+                },
+                self.tr("clear-board"),
+                simple_ev("click", Message::Clear)
+            ],
+            self.view_new_game(self.model.difficulty),
+            h4![self.tr("rules-header")],
+            ul![
+                li![self.tr("rule-1")],
+                li![self.tr("rule-2")],
+                li![self.tr("rule-3")],
+            ]
+        ];
         seed::log("view before combine");
         div![
             attrs! {"class" => "container"},
             header,
-            div![
-                attrs! {"class" => "row"},
-                board,
-                controls
-            ]
+            div![attrs! {"class" => "row"}, board, controls]
         ]
     }
 }

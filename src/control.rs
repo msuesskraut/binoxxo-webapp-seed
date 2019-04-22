@@ -64,7 +64,11 @@ fn change_language(model: &mut Model) {
     model.language = model.language.next();
     let storage = seed::storage::get_storage();
     if let Some(storage) = storage {
-        seed::log!(format!("Store {} = {}", LANGUAGE_STORAGE, model.language.to_string()));
+        seed::log!(format!(
+            "Store {} = {}",
+            LANGUAGE_STORAGE,
+            model.language.to_string()
+        ));
         seed::storage::store_data(&storage, LANGUAGE_STORAGE, &model.language);
     }
 }
