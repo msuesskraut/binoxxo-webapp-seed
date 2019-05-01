@@ -13,18 +13,25 @@ command = "wasm-pack"
 args = ["build", "--target", "no-modules", "--out-name", "binoxxo_webapp_seed", "--out-dir", "./dist"]
 
 [tasks.build_css]
-description = "Build css from template"
-install_crate = "rsass"
-install_crate_args = ["--bin", "rsass", "--features=commandline"]
-command = "rsass"
-args = ["./assets/main.scss"]
+description = "Build css from sass template"
+install_crate = { crate_name = "rsass", binary = "rsass", features = ["commandline"], test_arg = "--help" }
+script = [ "rsass ./assets/main.scss >./dist/main.css" ]
 
 [tasks.build_assets]
 description = "Copy assets into dist dir"
 script = [
     '''
-    cp index.html ./dist
+    cp assets/index.html ./dist
     cp assets/favicon.png ./dist
+    '''
+]
+
+[tasks.build_assets.windows]
+description = "Copy assets into dist dir"
+script = [
+    '''
+    copy assets\index.html .\dist
+    copy assets\favicon.png .\dist
     '''
 ]
 
