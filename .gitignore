@@ -1,15 +1,3 @@
 /target
 **/*.rs.bk
 Cargo.lock
-
-.sass-cache/
-
-dist/*.wasm
-dist/*.d.ts
-dist/*.ts
-dist/*.js
-dist/*.css
-dist/*.css.map
-dist/*.png
-dist/*.html
-wasm-pack.log
