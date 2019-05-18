@@ -73,7 +73,7 @@ fn change_language(model: &mut Model) {
     }
 }
 
-pub fn update(message: Message, model: &mut Model) -> Update<Message> {
+pub fn update(message: Message, model: &mut Model, _ : &mut Orders<Message>) {
     seed::log!(format!("Got {:?}", message));
 
     match message {
@@ -82,5 +82,4 @@ pub fn update(message: Message, model: &mut Model) -> Update<Message> {
         Message::Clear => clear_board(model),
         Message::ToggleLanguage => change_language(model),
     }
-    Render.into()
 }
