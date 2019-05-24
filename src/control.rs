@@ -73,7 +73,7 @@ fn change_language(model: &mut Model) {
     }
 }
 
-pub fn update(message: Message, model: &mut Model, _ : &mut Orders<Message>) {
+pub fn update(message: Message, model: &mut Model, _: &mut Orders<Message>) {
     seed::log!(format!("Got {:?}", message));
 
     match message {

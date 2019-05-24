@@ -5,18 +5,6 @@ use binoxxo::rules::{is_board_full, is_board_valid};
 use fluent_bundle::{FluentBundle, FluentValue};
 use seed::prelude::*;
 
-macro_rules! tr {
-    ( $($part:expr),* $(,)* ) => {
-        {
-            let mut el = El::empty(seed::dom_types::Tag::Tr);
-            $ (
-                    $part.update(&mut el);
-            )*
-            el
-        }
-    };
-}
-
 struct ViewBuilder<'a> {
     bundle: FluentBundle<'a>,
     model: &'a Model,
@@ -70,6 +58,8 @@ impl<'a> ViewBuilder<'a> {
     }
 
     fn view_row(&self, row: usize) -> El<Message> {
+        use seed::*;
+
         let size = self.model.get_size();
         let cells: Vec<El<Message>> = (0..size).map(|col| self.view_cell(col, row)).collect();
         tr![cells]
@@ -125,19 +115,9 @@ impl<'a> ViewBuilder<'a> {
             FluentValue::String(self.tr(&format!("difficulty-{}", difficulty))),
         );
 
-        seed::log(format!("display difficulty = {}", difficulty));
-        seed::log(format!(
-            "  has new-game: {}",
-            self.bundle.has_message("new-game")
-        ));
-        seed::log(format!(
-            "  has difficulty-display: {}",
-            self.bundle.has_message("difficulty-dislay")
-        ));
         let text = self
             .bundle
             .format("difficulty-display", Some(&difficulty_arg));
-        seed::log(format!("  text = {:#?}", text));
         let diff_header = h4![
             attrs! {"id" => "Difficulty-Display"},
             text.expect(&format!(
@@ -146,7 +126,6 @@ impl<'a> ViewBuilder<'a> {
             ))
             .0
         ];
-        seed::log("display new-game button");
         let new_game_button = button![
             attrs! {
                 "class" => "btn btn-primary dropdown-toggle";
@@ -158,7 +137,6 @@ impl<'a> ViewBuilder<'a> {
             },
             self.tr("new-game")
         ];
-        seed::log("display new-game levels");
         let new_game_levels = div![
             attrs! {
                 "class" => "dropdown-menu";
@@ -169,7 +147,6 @@ impl<'a> ViewBuilder<'a> {
             self.view_difficulty(Difficulty::Hard),
         ];
 
-        seed::log("display new-game combine");
         vec![
             diff_header,
             div![
@@ -180,10 +157,44 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
+    fn view_footer(&self) -> El<Message> {
+        use seed::*;
+
+        const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
+        const REPO: Option<&'static str> = option_env!("CARGO_PKG_REPOSITORY");
+
+        div![
+            class!["row"],
+            div![
+                class!["col footer"],
+                self.tr("app-name"),
+                if let Some(url) = REPO {
+                    span![
+                        " | ",
+                        a![
+                            attrs![
+                                "href" => url;
+                                "ref" => "norefferer noopener external";
+                                "target" => "_blank"
+                            ],
+                            "Github"
+                        ],
+                    ]
+                }
+                else {
+                    seed::empty()
+                },
+                format!(" | {}: {}",
+                    self.tr("version"),
+                    VERSION.unwrap_or(&self.tr("version-unknown"))
+                )
+            ]
+        ]
+    }
+
     pub fn view(&self) -> El<Message> {
         use seed::*;
 
-        seed::log("before header");
         let header = div![
             attrs! {"class" => "row"},
             div![
@@ -201,12 +212,10 @@ impl<'a> ViewBuilder<'a> {
                 h1![self.tr("header")],
             ]
         ];
-        seed::log("view before board");
         let board = div![
             attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
             self.view_board()
         ];
-        seed::log("view before controls");
         let controls = div![
             attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
             button![
@@ -225,11 +234,11 @@ impl<'a> ViewBuilder<'a> {
                 li![self.tr("rule-3")],
             ]
         ];
-        seed::log("view before combine");
         div![
-            attrs! {"class" => "container"},
+            class!["container"],
             header,
-            div![attrs! {"class" => "row"}, board, controls]
+            div![attrs! {"class" => "row"}, board, controls],
+            self.view_footer()
         ]
     }
 }

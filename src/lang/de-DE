@@ -20,3 +20,8 @@ rules-header = Regeln
 rule-1 = Niemals mehr als zwei benachbarte Xs oder Os
 rule-2 = Jede Zeile und jede Spalte müssen die gleiche Anzahl von Xs and Os enthalten
 rule-3 = Jede Zeile und jede Spalte kommt nur einmal vor
+
+### footer
+app-name = Binoxxo
+version = Version
+version-unknown = Unbekannt

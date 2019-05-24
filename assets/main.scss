@@ -58,3 +58,16 @@ game-msg {
         }
     }
 }
+
+.footer {
+    text-align: center;
+    color: dimgray;
+    font-size: 60%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    a {
+        color: dimgray;
+        :hover {
+            text-underline-position: below;
+        }
+    }
+}
