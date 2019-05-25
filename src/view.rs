@@ -46,7 +46,7 @@ impl<'a> ViewBuilder<'a> {
         let mut td = td![
             // id is required by engine for correct updates,
             // otherwise "board" gets randomized in NewGame (bug in seed?)
-            class![class_name], 
+            class![class_name],
             attrs! {At::Id => id },
             style! {"width" => format!("{}%", 100.0 / (size as f64))},
             self.view_field(field),
@@ -82,7 +82,11 @@ impl<'a> ViewBuilder<'a> {
                 };
 
                 div![
-                    class![if valid { "alert alert-success" } else { "alert alert-danger" }],
+                    class![if valid {
+                        "alert alert-success"
+                    } else {
+                        "alert alert-danger"
+                    }],
                     attrs! {
                         At::Id => "end-game-alert"
                     },
@@ -151,11 +155,7 @@ impl<'a> ViewBuilder<'a> {
 
         vec![
             diff_header,
-            div![
-                class!["dropdown"],
-                new_game_button,
-                new_game_levels,
-            ],
+            div![class!["dropdown"], new_game_button, new_game_levels,],
         ]
     }
 
@@ -174,7 +174,7 @@ impl<'a> ViewBuilder<'a> {
                     span![
                         " | ",
                         a![
-                            attrs!{
+                            attrs! {
                                 At::Href => url;
                                 At::Rel => "norefferer noopener external";
                                 At::Target => "_blank"
@@ -182,11 +182,11 @@ impl<'a> ViewBuilder<'a> {
                             "Github"
                         ],
                     ]
-                }
-                else {
+                } else {
                     seed::empty()
                 },
-                format!(" | {}: {}",
+                format!(
+                    " | {}: {}",
                     self.tr("version"),
                     VERSION.unwrap_or(&self.tr("version-unknown"))
                 )
