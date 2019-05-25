@@ -27,7 +27,7 @@ impl<'a> ViewBuilder<'a> {
             Field::O => "far fa-circle",
         };
 
-        let mut i = i![attrs! {"class" => classes}];
+        let mut i = i![class![classes]];
         if Field::Empty == field {
             i.add_style("font-size".into(), "20%".into());
         }
@@ -39,20 +39,21 @@ impl<'a> ViewBuilder<'a> {
 
         let field = self.model.board.get(col, row);
         let editable = self.model.editable.is_editable(col, row);
-        let class = if editable { "guess" } else { "" };
+        let class_name = if editable { "guess" } else { "" };
         let id = format!("cell-{}-{}", col, row);
         let size = self.model.get_size();
 
         let mut td = td![
             // id is required by engine for correct updates,
             // otherwise "board" gets randomized in NewGame (bug in seed?)
-            attrs! {"class" => class.to_string(); "id" => id },
+            class![class_name], 
+            attrs! {At::Id => id },
             style! {"width" => format!("{}%", 100.0 / (size as f64))},
             self.view_field(field),
         ];
         if editable {
             td.listeners
-                .push(simple_ev("click", Message::Toggle(CellPos { col, row })));
+                .push(simple_ev(Ev::Click, Message::Toggle(CellPos { col, row })));
         }
         td
     }
@@ -71,7 +72,7 @@ impl<'a> ViewBuilder<'a> {
         let size = self.model.get_size();
         let rows: Vec<El<Message>> = (0..size).map(|row| self.view_row(row)).collect();
         div![
-            attrs! {"id" => "board"},
+            attrs! {At::Id => "board"},
             if is_board_full(&self.model.board) {
                 let valid = is_board_valid(&self.model.board);
                 let text = if valid {
@@ -81,9 +82,9 @@ impl<'a> ViewBuilder<'a> {
                 };
 
                 div![
+                    class![if valid { "alert alert-success" } else { "alert alert-danger" }],
                     attrs! {
-                        "class" => if valid { "alert alert-success" } else { "alert alert-danger" };
-                        "id" => "end-game-alert"
+                        At::Id => "end-game-alert"
                     },
                     text
                 ]
@@ -98,17 +99,18 @@ impl<'a> ViewBuilder<'a> {
         use seed::*;
 
         a![
+            class!["dropdown-item"],
             attrs! {
-                "class" => "dropdown-item";
-                "href" => "#";
+                At::Href => "#";
             },
             self.tr(&format!("difficulty-{}", difficulty)),
-            simple_ev("click", Message::NewGame(difficulty))
+            simple_ev(Ev::Click, Message::NewGame(difficulty))
         ]
     }
 
     fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
         use seed::*;
+
         let mut difficulty_arg = HashMap::new();
         difficulty_arg.insert(
             "difficulty",
@@ -119,7 +121,7 @@ impl<'a> ViewBuilder<'a> {
             .bundle
             .format("difficulty-display", Some(&difficulty_arg));
         let diff_header = h4![
-            attrs! {"id" => "Difficulty-Display"},
+            attrs! {At::Id => "Difficulty-Display"},
             text.expect(&format!(
                 "tr(difficulty-display[difficulty = {}]) failed",
                 difficulty
@@ -127,10 +129,10 @@ impl<'a> ViewBuilder<'a> {
             .0
         ];
         let new_game_button = button![
+            class!["btn btn-primary dropdown-toggle"],
             attrs! {
-                "class" => "btn btn-primary dropdown-toggle";
-                "type" => "button";
-                "id" => "New-Game-Difficulty";
+                At::Type => "button";
+                At::Id => "New-Game-Difficulty";
                 "data-toggle" => "dropdown";
                 "aria-haspopup" => "true";
                 "aria-expanded" => "false";
@@ -138,8 +140,8 @@ impl<'a> ViewBuilder<'a> {
             self.tr("new-game")
         ];
         let new_game_levels = div![
+            class!["dropdown-menu"],
             attrs! {
-                "class" => "dropdown-menu";
                 "aria-labelledby" => "New-Game-Difficulty";
             },
             self.view_difficulty(Difficulty::Easy),
@@ -150,7 +152,7 @@ impl<'a> ViewBuilder<'a> {
         vec![
             diff_header,
             div![
-                attrs! {"class" => "dropdown"},
+                class!["dropdown"],
                 new_game_button,
                 new_game_levels,
             ],
@@ -172,11 +174,11 @@ impl<'a> ViewBuilder<'a> {
                     span![
                         " | ",
                         a![
-                            attrs![
-                                "href" => url;
-                                "ref" => "norefferer noopener external";
-                                "target" => "_blank"
-                            ],
+                            attrs!{
+                                At::Href => url;
+                                At::Rel => "norefferer noopener external";
+                                At::Target => "_blank"
+                            },
                             "Github"
                         ],
                     ]
@@ -196,32 +198,32 @@ impl<'a> ViewBuilder<'a> {
         use seed::*;
 
         let header = div![
-            attrs! {"class" => "row"},
+            class!["row"],
             div![
-                attrs! {"class" => "col"},
+                class!["col"],
                 div![
+                    class!["language-switch"],
                     attrs! {
-                        "class" => "language-switch";
                         "data-toggle" => "tooltip";
                         "data-placement" => "bottom";
-                        "title" => self.tr("language-toggle");
+                        At::Title => self.tr("language-toggle");
                     },
-                    i![attrs! {"class" => "fas fa-language"}],
-                    simple_ev("click", Message::ToggleLanguage),
+                    i![class!["fas fa-language"]],
+                    simple_ev(Ev::Click, Message::ToggleLanguage),
                 ],
                 h1![self.tr("header")],
             ]
         ];
         let board = div![
-            attrs! {"class" => "cl-xs-8 col-sm-8 col-md-8 col-lg-8"},
+            class!["cl-xs-8 col-sm-8 col-md-8 col-lg-8"],
             self.view_board()
         ];
         let controls = div![
-            attrs! {"class" => "col-xs-4 col-sm-4 col-md-4 col-lg-4"},
+            class!["col-xs-4 col-sm-4 col-md-4 col-lg-4"],
             button![
+                class!["btn btn-secondary"],
                 attrs! {
-                    "class" => "btn btn-secondary";
-                    "id" => "clear-board"
+                    At::Id => "clear-board"
                 },
                 self.tr("clear-board"),
                 simple_ev("click", Message::Clear)
@@ -237,7 +239,7 @@ impl<'a> ViewBuilder<'a> {
         div![
             class!["container"],
             header,
-            div![attrs! {"class" => "row"}, board, controls],
+            div![class!["row"], board, controls],
             self.view_footer()
         ]
     }
