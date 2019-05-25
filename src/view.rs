@@ -14,7 +14,7 @@ impl<'a> ViewBuilder<'a> {
     fn tr(&self, id: &str) -> String {
         self.bundle
             .format(id, None)
-            .expect(&format!("tr({}) failed", id))
+            .unwrap_or_else(|| panic!("tr({}) failed", id))
             .0
     }
 
@@ -126,7 +126,7 @@ impl<'a> ViewBuilder<'a> {
             .format("difficulty-display", Some(&difficulty_arg));
         let diff_header = h4![
             attrs! {At::Id => "Difficulty-Display"},
-            text.expect(&format!(
+            text.unwrap_or_else(|| panic!(
                 "tr(difficulty-display[difficulty = {}]) failed",
                 difficulty
             ))
@@ -245,7 +245,7 @@ impl<'a> ViewBuilder<'a> {
     }
 }
 
-fn build_view<'a>(model: &'a Model) -> ViewBuilder<'a> {
+fn build_view(model: &Model) -> ViewBuilder {
     ViewBuilder {
         bundle: model.res_mgr.get_bundle(&model.language.to_string()),
         model,
