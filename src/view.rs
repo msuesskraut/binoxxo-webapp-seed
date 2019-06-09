@@ -4,6 +4,7 @@ use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid};
 use fluent_bundle::{FluentBundle, FluentValue};
 use seed::prelude::*;
+use std::collections::HashMap;
 
 struct ViewBuilder<'a> {
     bundle: FluentBundle<'a>,
@@ -40,14 +41,14 @@ impl<'a> ViewBuilder<'a> {
         let field = self.model.board.get(col, row);
         let editable = self.model.editable.is_editable(col, row);
         let class_name = if editable { "guess" } else { "" };
-        let id = format!("cell-{}-{}", col, row);
+        let cell_id = format!("cell-{}-{}", col, row);
         let size = self.model.get_size();
 
         let mut td = td![
             // id is required by engine for correct updates,
             // otherwise "board" gets randomized in NewGame (bug in seed?)
             class![class_name],
-            attrs! {At::Id => id },
+            id!(&cell_id),
             style! {"width" => format!("{}%", 100.0 / (size as f64))},
             self.view_field(field),
         ];
@@ -66,39 +67,6 @@ impl<'a> ViewBuilder<'a> {
         tr![cells]
     }
 
-    fn view_board(&self) -> El<Message> {
-        use seed::*;
-
-        let size = self.model.get_size();
-        let rows: Vec<El<Message>> = (0..size).map(|row| self.view_row(row)).collect();
-        div![
-            attrs! {At::Id => "board"},
-            if is_board_full(&self.model.board) {
-                let valid = is_board_valid(&self.model.board);
-                let text = if valid {
-                    self.tr("game-won")
-                } else {
-                    self.tr("game-lost")
-                };
-
-                div![
-                    class![if valid {
-                        "alert alert-success"
-                    } else {
-                        "alert alert-danger"
-                    }],
-                    attrs! {
-                        At::Id => "end-game-alert"
-                    },
-                    text
-                ]
-            } else {
-                seed::empty()
-            },
-            table![rows]
-        ]
-    }
-
     fn view_difficulty(&self, difficulty: Difficulty) -> El<Message> {
         use seed::*;
 
@@ -112,31 +80,14 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
+    fn view_new_game_button(&self) -> El<Message> {
         use seed::*;
 
-        let mut difficulty_arg = HashMap::new();
-        difficulty_arg.insert(
-            "difficulty",
-            FluentValue::String(self.tr(&format!("difficulty-{}", difficulty))),
-        );
-
-        let text = self
-            .bundle
-            .format("difficulty-display", Some(&difficulty_arg));
-        let diff_header = h4![
-            attrs! {At::Id => "Difficulty-Display"},
-            text.unwrap_or_else(|| panic!(
-                "tr(difficulty-display[difficulty = {}]) failed",
-                difficulty
-            ))
-            .0
-        ];
         let new_game_button = button![
             class!["btn btn-primary dropdown-toggle"],
+            id!("New-Game-Difficulty"),
             attrs! {
                 At::Type => "button";
-                At::Id => "New-Game-Difficulty";
                 "data-toggle" => "dropdown";
                 "aria-haspopup" => "true";
                 "aria-expanded" => "false";
@@ -153,9 +104,63 @@ impl<'a> ViewBuilder<'a> {
             self.view_difficulty(Difficulty::Hard),
         ];
 
+        div![class!["dropdown"], new_game_button, new_game_levels]
+    }
+
+    fn view_board(&self) -> Vec<El<Message>> {
+        use seed::*;
+
+        let size = self.model.get_size();
+        let is_full = is_board_full(&self.model.board);
+        let is_valid = is_board_valid(&self.model.board);
+        let rows: Vec<El<Message>> = (0..size).map(|row| self.view_row(row)).collect();
+        let mut board = vec![
+            div![
+                id!("board"),
+                table![
+                    class![if is_full && !is_valid { "error" } else { "" }],
+                    rows,
+                ]
+            ]
+        ];
+        if is_valid {
+            board.push(div![
+                id!("success-page"),
+                class!("overlay"),
+                div![
+                    class!("overlay-content"),
+                    h1![self.tr("game-won")],
+                    self.view_new_game_button()
+                ]
+            ]);
+        }
+        board
+    }
+
+    fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
+        use seed::*;
+
+        let mut difficulty_arg = HashMap::new();
+        difficulty_arg.insert(
+            "difficulty",
+            FluentValue::String(self.tr(&format!("difficulty-{}", difficulty))),
+        );
+
+        let text = self
+            .bundle
+            .format("difficulty-display", Some(&difficulty_arg));
+        let diff_header = h4![
+            id!("Difficulty-Display"),
+            text.unwrap_or_else(|| panic!(
+                "tr(difficulty-display[difficulty = {}]) failed",
+                difficulty
+            ))
+            .0
+        ];
+
         vec![
             diff_header,
-            div![class!["dropdown"], new_game_button, new_game_levels,],
+            self.view_new_game_button()
         ]
     }
 
@@ -222,9 +227,7 @@ impl<'a> ViewBuilder<'a> {
             class!["col-xs-4 col-sm-4 col-md-4 col-lg-4"],
             button![
                 class!["btn btn-secondary"],
-                attrs! {
-                    At::Id => "clear-board"
-                },
+                id!("clear-board"),
                 self.tr("clear-board"),
                 simple_ev("click", Message::Clear)
             ],

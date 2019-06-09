@@ -1,10 +1,11 @@
 $base_color : #202020;
 $fixed_color : darken($base_color, 80%);
 $guess_color : #009900;
+$error_color : red;
 
-$phone: "(max-width: 767px)";
-$tablet: "(min-width: 768px) and (max-width: 1023px)";
-$desktop: "(min-width: 1024px)";
+$phone: "screen and (max-width: 767px)";
+$tablet: "screen and (min-width: 768px) and (max-width: 1023px)";
+$desktop: "screen and (min-width: 1024px)";
 
 body {
     background-color: #efefef;
@@ -22,19 +23,14 @@ h1 {
     color: lighten(black, 40%);
 }
 
-game-msg {
-    margin-top:10px;
-    margin-left:10px;
-    margin-right:10px;
-}
-
 #board {
     table {
         margin: 2em;
         border-collapse: collapse;
+        border: 3px solid lighten($base_color, 66%);
 
         td {
-            border: 1px solid $base_color;
+            border: 1px solid lighten($base_color, 66%);
             padding: 1em;
             font-family: Arial, Helvetica, sans-serif;
             font-weight: 800;
@@ -56,6 +52,14 @@ game-msg {
             color: $guess_color;
             cursor: pointer;
         }
+        td.error {
+            border-color: $error_color;
+            color: $error_color;
+        }
+    }
+    table.error {
+        color: $error_color;
+        border: 3px solid $error_color;
     }
 }
 
@@ -68,6 +72,61 @@ game-msg {
         color: dimgray;
         :hover {
             text-underline-position: below;
+        }
+    }
+}
+
+ /* The Overlay (background) */
+.overlay {
+    /* Height & width depends on how you want to reveal the overlay (see JS below) */   
+    height: 100%;
+    width: 100%;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    background-color: rgb(0,0,0); /* Black fallback color */
+    background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    // transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+    display: block;
+
+    /* Position the content inside the overlay */
+    .overlay-content {
+        position: relative;
+        top: 25%; /* 25% from the top */
+        width: 100%; /* 100% width */
+        text-align: center; /* Centered text/links */
+        margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+        color: #818181;
+    }
+    /* The navigation links inside the overlay */
+    a {
+        padding: 8px;
+        text-decoration: none;
+        font-size: 36px;
+        color: #818181;
+        display: block; /* Display block instead of inline */
+        transition: 0.3s; /* Transition effects on hover (color) */
+        @media #{$phone} {
+            font-size: 20px
+        }
+    }
+    /* When you mouse over the navigation links, change their color */
+    a:hover, a:focus {
+        color: #f1f1f1;
+    }
+
+    /* Position the close button (top right corner) */
+    .closebtn {
+        position: absolute;
+        top: 20px;
+        right: 45px;
+        font-size: 60px;
+        @media #{$phone} {
+            font-size: 40px;
+            top: 15px;
+            right: 35px;
         }
     }
 }
