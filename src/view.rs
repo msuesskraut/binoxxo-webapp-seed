@@ -114,15 +114,13 @@ impl<'a> ViewBuilder<'a> {
         let is_full = is_board_full(&self.model.board);
         let is_valid = is_board_valid(&self.model.board);
         let rows: Vec<El<Message>> = (0..size).map(|row| self.view_row(row)).collect();
-        let mut board = vec![
-            div![
-                id!("board"),
-                table![
-                    class![if is_full && !is_valid { "error" } else { "" }],
-                    rows,
-                ]
+        let mut board = vec![div![
+            id!("board"),
+            table![
+                class![if is_full && !is_valid { "error" } else { "" }],
+                rows,
             ]
-        ];
+        ]];
         if is_valid {
             board.push(div![
                 id!("success-page"),
@@ -158,10 +156,7 @@ impl<'a> ViewBuilder<'a> {
             .0
         ];
 
-        vec![
-            diff_header,
-            self.view_new_game_button()
-        ]
+        vec![diff_header, self.view_new_game_button()]
     }
 
     fn view_footer(&self) -> El<Message> {
