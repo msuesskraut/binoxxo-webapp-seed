@@ -5,7 +5,7 @@ authors = ["Martin Suesskraut <martin.suesskraut@gmail.com>"]
 edition = "2018"
 readme = "README.md"
 license = "MIT"
-description = "Binoxxo as a webapp using wasm and seed"
+description = "Binoxxo puzzle game as a webapp using wasm and seed"
 repository = "https://github.com/msuesskraut/binoxxo-webapp-seed"
 homepage = "https://msuesskraut.github.io/binoxxo/"
 
