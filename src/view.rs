@@ -1,7 +1,7 @@
 use crate::control::{CellPos, Message};
 use crate::model::*;
 use binoxxo::field::Field;
-use binoxxo::rules::{is_board_full, is_board_valid};
+use binoxxo::rules::{is_board_full, is_board_valid, is_move_valid};
 use fluent_bundle::{FluentBundle, FluentValue};
 use seed::prelude::*;
 use std::collections::HashMap;
@@ -40,15 +40,17 @@ impl<'a> ViewBuilder<'a> {
 
         let field = self.model.board.get(col, row);
         let editable = self.model.editable.is_editable(col, row);
-        let class_name = if editable { "guess" } else { "" };
+        let is_valid = (Helper::Disabled == self.model.helper) || (Field::Empty == field) || is_move_valid(&self.model.board, col, row);
+        let class_name_guess = if editable { "guess" } else { "" };
+        let class_name_valid = if !is_valid { "error" } else { "" };
         let cell_id = format!("cell-{}-{}", col, row);
         let size = self.model.get_size();
 
         let mut td = td![
             // id is required by engine for correct updates,
             // otherwise "board" gets randomized in NewGame (bug in seed?)
-            class![class_name],
             id!(&cell_id),
+            class![class_name_guess, class_name_valid],
             style! {"width" => format!("{}%", 100.0 / (size as f64))},
             self.view_field(field),
         ];
@@ -103,8 +105,22 @@ impl<'a> ViewBuilder<'a> {
             self.view_difficulty(Difficulty::Medium),
             self.view_difficulty(Difficulty::Hard),
         ];
+        let mut enable_helper = button![
+            id!("Enable-Disbale-Helper"),
+            self.tr("helper"),
+            attrs!{
+                "data-toggle" => "tooltip";
+                "data-placement" => "right";
+                "title" => self.tr("helper-tooltip");
+            },
+            simple_ev(Ev::Click, Message::ToggleHelper)
+        ];
+        enable_helper.add_attr("class".to_string(), match self.model.helper {
+            Helper::Disabled => "btn btn-outline-secondary",
+            Helper::Enabled => "btn btn-secondary",
+        }.to_string());
 
-        div![class!["dropdown"], new_game_button, new_game_levels]
+        div![class!["dropdown"], new_game_button, new_game_levels, " ", enable_helper]
     }
 
     fn view_board(&self) -> Vec<El<Message>> {

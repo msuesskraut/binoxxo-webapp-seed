@@ -86,9 +86,44 @@ impl Language {
     }
 }
 
+#[derive(PartialEq, Clone, Copy, Debug, Serialize, Deserialize)]
+pub enum Helper {
+    Disabled,
+    Enabled
+} 
+
+impl Default for Helper {
+    fn default() -> Self {
+        Helper::Disabled
+    }
+}
+
+impl ToString for Helper {
+    fn to_string(&self) -> String {
+        use Helper::*;
+
+        match self {
+            Disabled => "Disabled".to_string(),
+            Enabled => "Enabled".to_string(),
+        }
+    }
+}
+
+impl Helper {
+    pub fn toggle(self) -> Self {
+        use Helper::*;
+
+        match self {
+            Disabled => Enabled,
+            Enabled => Disabled,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Model {
     pub difficulty: Difficulty,
+    pub helper: Helper,
     pub board: Board,
     pub editable: Editable,
     pub res_mgr: ResourceManager,
@@ -96,7 +131,7 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn new(difficulty: Difficulty, language: Language) -> Model {
+    pub fn new(difficulty: Difficulty, helper: Helper, language: Language) -> Model {
         let (size, guesses) = match difficulty {
             Difficulty::Easy => (6, 5),
             Difficulty::Medium => (8, 10),
@@ -109,6 +144,7 @@ impl Model {
 
         Model {
             difficulty,
+            helper,
             board,
             editable,
             res_mgr,
@@ -123,6 +159,6 @@ impl Model {
 
 impl Default for Model {
     fn default() -> Self {
-        Model::new(Difficulty::default(), Language::default())
+        Model::new(Difficulty::default(), Helper::default(), Language::default())
     }
 }

@@ -13,6 +13,8 @@ difficulty-display = Difficulty: {$difficulty}
 new-game = New game
 language-toggle = Toggle Language: English <-> German
 clear-board = Clear Board
+helper = Help
+helper-tooltip = Will highlight errors, when selected
 
 ### general text
 header = Let's play Binoxxo

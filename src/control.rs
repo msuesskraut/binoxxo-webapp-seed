@@ -4,6 +4,7 @@ use seed::prelude::*;
 
 pub const DIFFICULTY_STORAGE: &str = "Binoxxo-Difficulty";
 pub const LANGUAGE_STORAGE: &str = "Binoxxo-Language";
+pub const HELPER_STORAGE: &str = "Binoxxo-Helper";
 
 #[derive(Clone, Copy, Debug)]
 pub struct CellPos {
@@ -17,6 +18,7 @@ pub enum Message {
     Toggle(CellPos),
     Clear,
     ToggleLanguage,
+    ToggleHelper,
 }
 
 fn next_field(field: Field) -> Field {
@@ -43,7 +45,7 @@ fn new_game(model: &mut Model, difficulty: Difficulty) {
         seed::log!(format!("Store {} = {}", DIFFICULTY_STORAGE, difficulty));
         seed::storage::store_data(&storage, DIFFICULTY_STORAGE, &difficulty);
     }
-    let new_model = Model::new(difficulty, model.language);
+    let new_model = Model::new(difficulty, model.helper, model.language);
     model.board = new_model.board;
     model.difficulty = new_model.difficulty;
     model.editable = new_model.editable;
@@ -73,6 +75,19 @@ fn change_language(model: &mut Model) {
     }
 }
 
+fn change_helper(model: &mut Model) {
+    model.helper = model.helper.toggle();
+    let storage = seed::storage::get_storage();
+    if let Some(storage) = storage {
+        seed::log!(format!(
+            "Store {} = {}",
+            HELPER_STORAGE,
+            model.helper.to_string()
+        ));
+        seed::storage::store_data(&storage, HELPER_STORAGE, &model.helper);
+    }
+}
+
 pub fn update(message: Message, model: &mut Model, _: &mut Orders<Message>) {
     seed::log!(format!("Got {:?}", message));
 
@@ -81,5 +96,6 @@ pub fn update(message: Message, model: &mut Model, _: &mut Orders<Message>) {
         Message::NewGame(difficulty) => new_game(model, difficulty),
         Message::Clear => clear_board(model),
         Message::ToggleLanguage => change_language(model),
+        Message::ToggleHelper => change_helper(model),
     }
 }

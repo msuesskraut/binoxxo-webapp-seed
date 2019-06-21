@@ -13,6 +13,8 @@ difficulty-display = Schwierigkeit: {$difficulty}
 new-game = Neues Spiel
 language-toggle = Sprachumschaltung: Deutsch <-> Englisch
 clear-board = Grüne Felder löschen
+helper = Hilfe
+helper-tooltip = Hebt Fehler hervor, wenn ausgewählt
 
 ### general text
 header = Spiel Binoxxo
