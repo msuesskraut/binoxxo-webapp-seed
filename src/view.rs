@@ -141,32 +141,81 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_board(&self) -> Vec<El<Message>> {
+    fn view_board(&self, board_id: &str, is_error: bool) -> El<Message> {
         use seed::*;
 
         let size = self.model.get_size();
-        let is_full = is_board_full(&self.model.board);
-        let is_valid = is_board_valid(&self.model.board);
         let rows: Vec<El<Message>> = (0..size).map(|row| self.view_row(row)).collect();
-        let mut board = vec![div![
-            id!("board"),
+        div![
+            id!(board_id),
             table![
-                class![if is_full && !is_valid { "error" } else { "" }],
+                class![if is_error { "error" } else { "" }],
                 rows,
             ]
-        ]];
+        ]
+    }
+
+    fn view_new_game_button_success_page(&self, difficulty: Difficulty) -> El<Message> {
+        use seed::*;
+
+        button![
+            class!["btn btn-primary"],
+            self.tr(&format!("difficulty-{}", difficulty)),
+            simple_ev(Ev::Click, Message::NewGame(difficulty))
+        ]
+    }
+
+    fn view_game(&self) -> Vec<El<Message>> {
+        use seed::*;
+
+        let is_full = is_board_full(&self.model.board);
+        let is_valid = is_board_valid(&self.model.board);
+        let mut game = vec![self.view_board("board", is_full && !is_valid)];
         if is_valid {
-            board.push(div![
+            game.push(div![
                 id!("success-page"),
                 class!("overlay"),
                 div![
                     class!("overlay-content"),
-                    h1![self.tr("game-won")],
-                    self.view_new_game_button()
+                    div![
+                        class!["container"],
+                        div![
+                            class!["row justify-content-center"],
+                            div![
+                                class!["col"],
+                                div![
+                                    class!["alert alert-success"],
+                                    attrs!{"role" => "alert"},
+                                    h1![
+                                        class!["alert-heading"],
+                                        self.tr("game-won")
+                                    ],
+                                    hr![],
+                                    div![
+                                        class!["centered mx-auto"],
+                                        self.view_board("board-success", /*is_error:*/false)
+                                    ],
+                                    hr![],
+                                    h4![
+                                        class!["text-center"],
+                                        self.tr("new-game")
+                                    ],
+                                    div![
+                                        class!["text-center mx-auto"],
+                                        self.view_new_game_button_success_page(Difficulty::Easy),
+                                        raw!["&nbsp;"],
+                                        self.view_new_game_button_success_page(Difficulty::Medium),
+                                        raw!["&nbsp;"],
+                                        self.view_new_game_button_success_page(Difficulty::Hard),
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             ]);
         }
-        board
+        game
     }
 
     fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
@@ -250,7 +299,7 @@ impl<'a> ViewBuilder<'a> {
         ];
         let board = div![
             class!["cl-xs-8 col-sm-8 col-md-8 col-lg-8"],
-            self.view_board()
+            self.view_game()
         ];
         let controls = div![
             class!["col-xs-4 col-sm-4 col-md-4 col-lg-4"],

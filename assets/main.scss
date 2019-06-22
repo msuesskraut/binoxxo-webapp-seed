@@ -64,6 +64,34 @@ h1 {
     }
 }
 
+#board-success {
+    table {
+        margin: 2em;
+        border-collapse: collapse;
+        border: 3px solid;
+        border-spacing: 0px;
+
+        td {
+            border: 1px solid;
+            padding: 1em;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 800;
+            cursor: default;
+            text-align: center;
+
+            @media #{$desktop} {
+                font-size: 90%;
+            }
+            @media #{$tablet} {
+                font-size: 90%;
+            }
+            @media #{$phone} {
+                font-size: 60%;
+            }
+        }
+    }
+}
+
 .footer {
     text-align: center;
     color: dimgray;
@@ -93,7 +121,7 @@ h1 {
     // Position the content inside the overlay
     .overlay-content {
         position: relative;
-        top: 25%; // 25% from the top
+        top: 10%; // 25% from the top
         width: 100%; // 100% width
         text-align: center; // Centered text/links
         margin-top: 30px; // 30px top margin to avoid conflict with the close button on smaller screens
