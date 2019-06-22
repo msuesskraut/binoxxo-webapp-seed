@@ -148,6 +148,7 @@ impl<'a> ViewBuilder<'a> {
         let rows: Vec<El<Message>> = (0..size).map(|row| self.view_row(row)).collect();
         div![
             id!(board_id),
+            class!["board"],
             table![
                 class![if is_error { "error" } else { "" }],
                 rows,

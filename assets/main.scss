@@ -23,21 +23,33 @@ h1 {
     color: lighten(black, 40%);
 }
 
+.board {
+    table {
+        border: 3px solid;
+        border-spacing: 0px;
+        margin-left: auto;
+        margin-right: auto;
+
+        td {
+            border: 1px solid;
+            padding: 1em;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 800;
+            cursor: default;
+            text-align: center;
+        }
+    }
+}
+
 #board {
     table {
         margin: 2em;
         border-collapse: separate;
-        border: 3px solid lighten($base_color, 66%);
-        border-spacing: 0px;
+        border-color: lighten($base_color, 66%);
 
         td {
-            border: 1px solid lighten($base_color, 66%);
-            padding: 1em;
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: 800;
+            border-color: lighten($base_color, 66%);
             color: $fixed_color;
-            cursor: default;
-            text-align: center;
 
             @media #{$desktop} {
                 font-size: 120%;
@@ -60,26 +72,17 @@ h1 {
     }
     table.error {
         color: $error_color;
-        border: 3px solid $error_color;
+        border-color: $error_color;
     }
 }
 
 #board-success {
     table {
         border-collapse: collapse;
-        border: 3px solid;
-        border-spacing: 0px;
         margin-left: auto;
         margin-right: auto;
 
         td {
-            border: 1px solid;
-            padding: 1em;
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: 800;
-            cursor: default;
-            text-align: center;
-
             @media #{$desktop} {
                 font-size: 90%;
             }
