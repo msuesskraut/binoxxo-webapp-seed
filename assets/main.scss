@@ -66,10 +66,11 @@ h1 {
 
 #board-success {
     table {
-        margin: 2em;
         border-collapse: collapse;
         border: 3px solid;
         border-spacing: 0px;
+        margin-left: auto;
+        margin-right: auto;
 
         td {
             border: 1px solid;
