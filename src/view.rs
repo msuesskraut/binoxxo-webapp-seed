@@ -165,55 +165,65 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_game(&self) -> Vec<El<Message>> {
+    fn view_success_alert(&self) -> El<Message> {
         use seed::*;
 
+        div![
+            class!["alert alert-success"],
+            attrs!{"role" => "alert"},
+            h1![
+                class!["alert-heading"],
+                self.tr("game-won")
+            ],
+            hr![],
+            div![
+                class!["centered mx-auto"],
+                self.view_board("board-success", /*is_error:*/false)
+            ],
+            hr![],
+            h4![
+                class!["text-center"],
+                self.tr("new-game")
+            ],
+            div![
+                class!["text-center mx-auto"],
+                self.view_new_game_button_success_page(Difficulty::Easy),
+                raw!["&nbsp;"],
+                self.view_new_game_button_success_page(Difficulty::Medium),
+                raw!["&nbsp;"],
+                self.view_new_game_button_success_page(Difficulty::Hard),
+            ]
+        ]
+    }
+
+    fn view_success_page(&self) -> El<Message> {
+        use seed::*;
+
+        div![
+            id!("success-page"),
+            class!("overlay"),
+            div![
+                class!("overlay-content"),
+                div![
+                    class!["container"],
+                    div![
+                        class!["row justify-content-center"],
+                        div![
+                            class!["col"],
+                            self.view_success_alert()
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    }
+
+    fn view_game(&self) -> Vec<El<Message>> {
         let is_full = is_board_full(&self.model.board);
         let is_valid = is_board_valid(&self.model.board);
         let mut game = vec![self.view_board("board", is_full && !is_valid)];
         if is_valid {
-            game.push(div![
-                id!("success-page"),
-                class!("overlay"),
-                div![
-                    class!("overlay-content"),
-                    div![
-                        class!["container"],
-                        div![
-                            class!["row justify-content-center"],
-                            div![
-                                class!["col"],
-                                div![
-                                    class!["alert alert-success"],
-                                    attrs!{"role" => "alert"},
-                                    h1![
-                                        class!["alert-heading"],
-                                        self.tr("game-won")
-                                    ],
-                                    hr![],
-                                    div![
-                                        class!["centered mx-auto"],
-                                        self.view_board("board-success", /*is_error:*/false)
-                                    ],
-                                    hr![],
-                                    h4![
-                                        class!["text-center"],
-                                        self.tr("new-game")
-                                    ],
-                                    div![
-                                        class!["text-center mx-auto"],
-                                        self.view_new_game_button_success_page(Difficulty::Easy),
-                                        raw!["&nbsp;"],
-                                        self.view_new_game_button_success_page(Difficulty::Medium),
-                                        raw!["&nbsp;"],
-                                        self.view_new_game_button_success_page(Difficulty::Hard),
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]);
+            game.push(self.view_success_page());
         }
         game
     }
