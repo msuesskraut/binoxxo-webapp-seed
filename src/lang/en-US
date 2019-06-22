@@ -13,7 +13,8 @@ difficulty-display = Difficulty: {$difficulty}
 new-game = New game
 language-toggle = Toggle Language: English <-> German
 clear-board = Clear Board
-helper = Help
+helper-on = Help: on
+helper-off = Help: off
 helper-tooltip = Will highlight errors, when selected
 
 ### general text

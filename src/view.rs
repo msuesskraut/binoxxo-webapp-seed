@@ -28,11 +28,13 @@ impl<'a> ViewBuilder<'a> {
             Field::O => "far fa-circle",
         };
 
-        let mut i = i![class![classes]];
+        let field_view = i![class![classes]];
         if Field::Empty == field {
-            i.add_style("font-size".into(), "20%".into());
+            field_view.add_style("font-size".into(), "20%".into())
         }
-        i
+        else {
+            field_view
+        }
     }
 
     fn view_cell(&self, col: usize, row: usize) -> El<Message> {
@@ -105,9 +107,8 @@ impl<'a> ViewBuilder<'a> {
             self.view_difficulty(Difficulty::Medium),
             self.view_difficulty(Difficulty::Hard),
         ];
-        let mut enable_helper = button![
+        let enable_helper = button![
             id!("Enable-Disbale-Helper"),
-            self.tr("helper"),
             attrs!{
                 "data-toggle" => "tooltip";
                 "data-placement" => "right";
@@ -115,12 +116,16 @@ impl<'a> ViewBuilder<'a> {
             },
             simple_ev(Ev::Click, Message::ToggleHelper)
         ];
-        enable_helper.add_attr("class".to_string(), match self.model.helper {
+        let enable_helper = enable_helper.add_attr("class".to_string(), match self.model.helper {
             Helper::Disabled => "btn btn-outline-secondary",
             Helper::Enabled => "btn btn-secondary",
         }.to_string());
+        let enable_helper = enable_helper.add_text(&(match self.model.helper {
+            Helper::Disabled => self.tr("helper-off"),
+            Helper::Enabled => self.tr("helper-on"),
+        }));
 
-        div![class!["dropdown"], new_game_button, new_game_levels, " ", enable_helper]
+        div![class!["dropdown"], new_game_button, new_game_levels, raw!("&nbsp;"), enable_helper]
     }
 
     fn view_board(&self) -> Vec<El<Message>> {

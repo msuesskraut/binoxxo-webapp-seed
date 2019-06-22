@@ -13,7 +13,7 @@ homepage = "https://msuesskraut.github.io/binoxxo/"
 crate-type = ["cdylib"]
 
 [dependencies]
-seed = "0.3.6"
+seed = "0.3.7"
 wasm-bindgen = "0.2.47"
 web-sys = "0.3.24"
 binoxxo = { version = "0.1.8", features = ["wasm-bindgen"] }
