@@ -27,8 +27,6 @@ h1 {
     table {
         border: 3px solid;
         border-spacing: 0px;
-        margin-left: auto;
-        margin-right: auto;
 
         td {
             border: 1px solid;
@@ -42,6 +40,7 @@ h1 {
 }
 
 #board {
+    @extend %board;
     table {
         margin: 2em;
         border-collapse: separate;
@@ -77,6 +76,7 @@ h1 {
 }
 
 #board-success {
+    @extend %board;
     table {
         border-collapse: collapse;
         margin-left: auto;
@@ -117,48 +117,20 @@ h1 {
     z-index: 1; // Sit on top
     left: 0;
     top: 0;
-    background-color: rgb(0,0,0); // Black fallback color
-    background-color: rgba(0,0,0, 0.9); // Black w/opacity
+    background-color: black; // Black fallback color
+    background-color: fade-out(black, 0.2); //scale-color(black, $alpha: 80%); // Black w/opacity
     overflow-x: hidden; // Disable horizontal scroll
     display: block; // always shown - seed just includes it on demand
 
     // Position the content inside the overlay
     .overlay-content {
         position: relative;
-        top: 10%; // 25% from the top
+        top: 10%; // 10% from the top
         width: 100%; // 100% width
         text-align: center; // Centered text/links
         margin-top: 30px; // 30px top margin to avoid conflict with the close button on smaller screens
-        color: #818181;
-    }
-    // The navigation links inside the overlay
-    a {
-        padding: 8px;
-        text-decoration: none;
-        font-size: 36px;
-        color: #818181;
-        display: block; // Display block instead of inline/
-        transition: 0.3s; // Transition effects on hover (color)
         @media #{$phone} {
-            font-size: 20px
-        }
-    }
-    // When you mouse over the navigation links, change their color
-    a:hover, a:focus {
-        color: #f1f1f1;
-    }
-
-    // Position the close button (top right corner)
-    .closebtn {
-        position: absolute;
-        top: 20px;
-        right: 45px;
-        font-size: 60px;
-        // make it smaller on phones
-        @media #{$phone} {
-            font-size: 40px;
-            top: 15px;
-            right: 35px;
+            top: 1em; // on phones 1 line from the top
         }
     }
 }
