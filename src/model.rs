@@ -89,8 +89,8 @@ impl Language {
 #[derive(PartialEq, Clone, Copy, Debug, Serialize, Deserialize)]
 pub enum Helper {
     Disabled,
-    Enabled
-} 
+    Enabled,
+}
 
 impl Default for Helper {
     fn default() -> Self {
@@ -159,6 +159,10 @@ impl Model {
 
 impl Default for Model {
     fn default() -> Self {
-        Model::new(Difficulty::default(), Helper::default(), Language::default())
+        Model::new(
+            Difficulty::default(),
+            Helper::default(),
+            Language::default(),
+        )
     }
 }

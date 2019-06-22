@@ -3,7 +3,7 @@ mod lang;
 mod model;
 mod view;
 
-use crate::control::{update, DIFFICULTY_STORAGE, LANGUAGE_STORAGE, HELPER_STORAGE};
+use crate::control::{update, DIFFICULTY_STORAGE, HELPER_STORAGE, LANGUAGE_STORAGE};
 use crate::model::{Difficulty, Helper, Language, Model};
 use crate::view::view;
 use wasm_bindgen::prelude::*;
@@ -42,7 +42,5 @@ pub fn render() {
     let helper = load_helper().unwrap_or_default();
 
     let model = Model::new(difficulty, helper, language);
-    seed::App::build(model, update, view)
-        .finish()
-        .run();
+    seed::App::build(model, update, view).finish().run();
 }

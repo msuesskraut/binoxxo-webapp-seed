@@ -31,8 +31,7 @@ impl<'a> ViewBuilder<'a> {
         let field_view = i![class![classes]];
         if Field::Empty == field {
             field_view.add_style("font-size".into(), "20%".into())
-        }
-        else {
+        } else {
             field_view
         }
     }
@@ -42,7 +41,9 @@ impl<'a> ViewBuilder<'a> {
 
         let field = self.model.board.get(col, row);
         let editable = self.model.editable.is_editable(col, row);
-        let is_valid = (Helper::Disabled == self.model.helper) || (Field::Empty == field) || is_move_valid(&self.model.board, col, row);
+        let is_valid = (Helper::Disabled == self.model.helper)
+            || (Field::Empty == field)
+            || is_move_valid(&self.model.board, col, row);
         let class_name_guess = if editable { "guess" } else { "" };
         let class_name_valid = if !is_valid { "error" } else { "" };
         let cell_id = format!("cell-{}-{}", col, row);
@@ -109,23 +110,35 @@ impl<'a> ViewBuilder<'a> {
         ];
         let enable_helper = button![
             id!("Enable-Disbale-Helper"),
-            attrs!{
+            attrs! {
                 "data-toggle" => "tooltip";
                 "data-placement" => "right";
                 "title" => self.tr("helper-tooltip");
             },
             simple_ev(Ev::Click, Message::ToggleHelper)
         ];
-        let enable_helper = enable_helper.add_attr("class".to_string(), match self.model.helper {
-            Helper::Disabled => "btn btn-outline-secondary",
-            Helper::Enabled => "btn btn-secondary",
-        }.to_string());
-        let enable_helper = enable_helper.add_text(&(match self.model.helper {
-            Helper::Disabled => self.tr("helper-off"),
-            Helper::Enabled => self.tr("helper-on"),
-        }));
+        let enable_helper = enable_helper.add_attr(
+            "class".to_string(),
+            match self.model.helper {
+                Helper::Disabled => "btn btn-outline-secondary",
+                Helper::Enabled => "btn btn-secondary",
+            }
+            .to_string(),
+        );
+        let enable_helper = enable_helper.add_text(
+            &(match self.model.helper {
+                Helper::Disabled => self.tr("helper-off"),
+                Helper::Enabled => self.tr("helper-on"),
+            }),
+        );
 
-        div![class!["dropdown"], new_game_button, new_game_levels, raw!("&nbsp;"), enable_helper]
+        div![
+            class!["dropdown"],
+            new_game_button,
+            new_game_levels,
+            raw!("&nbsp;"),
+            enable_helper
+        ]
     }
 
     fn view_board(&self) -> Vec<El<Message>> {
