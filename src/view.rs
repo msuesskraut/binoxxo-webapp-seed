@@ -149,10 +149,7 @@ impl<'a> ViewBuilder<'a> {
         div![
             id!(board_id),
             class!["board"],
-            table![
-                class![if is_error { "error" } else { "" }],
-                rows,
-            ]
+            table![class![if is_error { "error" } else { "" }], rows,]
         ]
     }
 
@@ -171,21 +168,15 @@ impl<'a> ViewBuilder<'a> {
 
         div![
             class!["alert alert-success"],
-            attrs!{"role" => "alert"},
-            h1![
-                class!["alert-heading"],
-                self.tr("game-won")
-            ],
+            attrs! {"role" => "alert"},
+            h1![class!["alert-heading"], self.tr("game-won")],
             hr![],
             div![
                 class!["centered mx-auto"],
-                self.view_board("board-success", /*is_error:*/false)
+                self.view_board("board-success", /*is_error:*/ false)
             ],
             hr![],
-            h4![
-                class!["text-center"],
-                self.tr("new-game")
-            ],
+            h4![class!["text-center"], self.tr("new-game")],
             div![
                 class!["text-center mx-auto"],
                 self.view_new_game_button_success_page(Difficulty::Easy),
@@ -209,10 +200,7 @@ impl<'a> ViewBuilder<'a> {
                     class!["container"],
                     div![
                         class!["row justify-content-center"],
-                        div![
-                            class!["col"],
-                            self.view_success_alert()
-                        ]
+                        div![class!["col"], self.view_success_alert()]
                     ]
                 ]
             ]
