@@ -2,21 +2,23 @@ use crate::control::{CellPos, Message};
 use crate::model::*;
 use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid, is_move_valid};
-use fluent_bundle::{FluentBundle, FluentValue};
+use fluent_bundle::{FluentBundle, FluentValue, FluentResource};
 use seed::prelude::*;
 use std::collections::HashMap;
 
 struct ViewBuilder<'a> {
-    bundle: FluentBundle<'a>,
+    bundle: FluentBundle<&'a FluentResource>,
     model: &'a Model,
 }
 
 impl<'a> ViewBuilder<'a> {
     fn tr(&self, id: &str) -> String {
+        let mut errors = vec![];
+        let msg = self.bundle.get_message(id)
+            .expect("Failed to retrieve the message");
+        let value = msg.value.expect("Failed to retrieve the value of the message");
         self.bundle
-            .format(id, None)
-            .unwrap_or_else(|| panic!("tr({}) failed", id))
-            .0
+            .format_pattern(value, None, &mut errors).to_string()
     }
 
     fn view_field(&self, field: Field) -> El<Message> {
@@ -223,19 +225,19 @@ impl<'a> ViewBuilder<'a> {
         let mut difficulty_arg = HashMap::new();
         difficulty_arg.insert(
             "difficulty",
-            FluentValue::String(self.tr(&format!("difficulty-{}", difficulty))),
+            FluentValue::String(self.tr(&format!("difficulty-{}", difficulty)).into()),
         );
 
+        let mut errors = vec![];
+        let msg = self.bundle.get_message("difficulty-display")
+            .expect("Failed to retrieve the message");
+        let value = msg.value.expect("Failed to retrieve the value of the message");
         let text = self
             .bundle
-            .format("difficulty-display", Some(&difficulty_arg));
+            .format_pattern(value, Some(&difficulty_arg), &mut errors);
         let diff_header = h4![
             id!("Difficulty-Display"),
-            text.unwrap_or_else(|| panic!(
-                "tr(difficulty-display[difficulty = {}]) failed",
-                difficulty
-            ))
-            .0
+            text
         ];
 
         vec![diff_header, self.view_new_game_button()]

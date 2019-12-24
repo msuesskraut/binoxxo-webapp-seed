@@ -1,5 +1,6 @@
 use elsa::FrozenMap;
 use fluent_bundle::{FluentBundle, FluentResource};
+use unic_langid::LanguageIdentifier;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 
@@ -42,10 +43,11 @@ impl ResourceManager {
         }
     }
 
-    pub fn get_bundle(&self, locale: &str) -> FluentBundle {
-        let mut bundle = FluentBundle::new(&[locale]);
-        let res = self.get_resource(locale);
-        bundle.add_resource(res).unwrap();
+    pub fn get_bundle(&self, locale_str: &str) -> FluentBundle<&FluentResource> {
+        let loc: LanguageIdentifier = locale_str.parse().expect("invalid locale string");
+        let mut bundle = FluentBundle::new(&[loc]);
+        let res = self.get_resource(locale_str);
+        bundle.add_resource(res).expect("Failed to add FTL resource");
         bundle
     }
 }
@@ -59,7 +61,13 @@ mod test {
         let rmgr = ResourceManager::new();
         let b = rmgr.get_bundle("en-US");
 
-        assert_eq!("Easy", b.format("difficulty-Easy", None).unwrap().0);
+        let mut errors = vec![];
+        let msg = b.get_message("difficulty-Easy")
+            .expect("Failed to retrieve the message");
+        let value = msg.value.expect("Failed to retrieve the value of the message");
+
+        assert_eq!("Easy", b.format_pattern(value, None, &mut errors));
+        assert!(errors.is_empty());
     }
 
     #[test]
@@ -67,6 +75,12 @@ mod test {
         let rmgr = ResourceManager::new();
         let b = rmgr.get_bundle("de-DE");
 
-        assert_eq!("Leicht", b.format("difficulty-Easy", None).unwrap().0);
+        let mut errors = vec![];
+        let msg = b.get_message("difficulty-Easy")
+            .expect("Failed to retrieve the message");
+        let value = msg.value.expect("Failed to retrieve the value of the message");
+
+        assert_eq!("Leicht", b.format_pattern(value, None, &mut errors));
+        assert!(errors.is_empty());
     }
 }
