@@ -2,7 +2,8 @@ use crate::control::{CellPos, Message};
 use crate::model::*;
 use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid, is_move_valid};
-use fluent_bundle::{FluentBundle, FluentValue, FluentResource};
+use fluent_bundle::{FluentArgs, FluentBundle, FluentValue, FluentResource};
+use web_sys::console::log_1;
 use seed::prelude::*;
 use std::collections::HashMap;
 
@@ -12,13 +13,22 @@ struct ViewBuilder<'a> {
 }
 
 impl<'a> ViewBuilder<'a> {
-    fn tr(&self, id: &str) -> String {
+    fn tr_with_args(&self, id: &str, args: Option<&FluentArgs>) -> String {
         let mut errors = vec![];
         let msg = self.bundle.get_message(id)
             .expect("Failed to retrieve the message");
         let value = msg.value.expect("Failed to retrieve the value of the message");
-        self.bundle
-            .format_pattern(value, None, &mut errors).to_string()
+        let res = self.bundle
+            .format_pattern(value, args, &mut errors).to_string();
+        if !errors.is_empty() {
+            log_1(&format!("Failed to translate {}:\n  {:?}\n", id, errors).into());
+            panic!("Error in fluent");
+        }
+        res
+    }
+
+    fn tr(&self, id: &str) -> String {
+        self.tr_with_args(id, None)
     }
 
     fn view_field(&self, field: Field) -> El<Message> {
@@ -222,19 +232,15 @@ impl<'a> ViewBuilder<'a> {
     fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
         use seed::*;
 
+        // build arguments for translation difficulty-display
         let mut difficulty_arg = HashMap::new();
         difficulty_arg.insert(
             "difficulty",
             FluentValue::String(self.tr(&format!("difficulty-{}", difficulty)).into()),
         );
 
-        let mut errors = vec![];
-        let msg = self.bundle.get_message("difficulty-display")
-            .expect("Failed to retrieve the message");
-        let value = msg.value.expect("Failed to retrieve the value of the message");
-        let text = self
-            .bundle
-            .format_pattern(value, Some(&difficulty_arg), &mut errors);
+        let text = self.tr_with_args("difficulty-display", Some(&difficulty_arg)); 
+
         let diff_header = h4![
             id!("Difficulty-Display"),
             text
