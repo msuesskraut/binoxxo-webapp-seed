@@ -2,10 +2,10 @@ use crate::control::{CellPos, Message};
 use crate::model::*;
 use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid, is_move_valid};
-use fluent_bundle::{FluentArgs, FluentBundle, FluentValue, FluentResource};
-use web_sys::console::log_1;
+use fluent_bundle::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use seed::prelude::*;
 use std::collections::HashMap;
+use web_sys::console::log_1;
 
 struct ViewBuilder<'a> {
     bundle: FluentBundle<&'a FluentResource>,
@@ -15,11 +15,17 @@ struct ViewBuilder<'a> {
 impl<'a> ViewBuilder<'a> {
     fn tr_with_args(&self, id: &str, args: Option<&FluentArgs>) -> String {
         let mut errors = vec![];
-        let msg = self.bundle.get_message(id)
+        let msg = self
+            .bundle
+            .get_message(id)
             .expect("Failed to retrieve the message");
-        let value = msg.value.expect("Failed to retrieve the value of the message");
-        let res = self.bundle
-            .format_pattern(value, args, &mut errors).to_string();
+        let value = msg
+            .value
+            .expect("Failed to retrieve the value of the message");
+        let res = self
+            .bundle
+            .format_pattern(value, args, &mut errors)
+            .to_string();
         if !errors.is_empty() {
             log_1(&format!("Failed to translate {}:\n  {:?}\n", id, errors).into());
             panic!("Error in fluent");
@@ -125,7 +131,7 @@ impl<'a> ViewBuilder<'a> {
                 "data-placement" => "right";
                 "title" => self.tr("helper-tooltip");
             },
-            class!{
+            class! {
                 match self.model.helper {
                     Helper::Disabled => "btn btn-outline-secondary",
                     Helper::Enabled => "btn btn-secondary",
@@ -233,12 +239,9 @@ impl<'a> ViewBuilder<'a> {
             FluentValue::String(self.tr(&format!("difficulty-{}", difficulty)).into()),
         );
 
-        let text = self.tr_with_args("difficulty-display", Some(&difficulty_arg)); 
+        let text = self.tr_with_args("difficulty-display", Some(&difficulty_arg));
 
-        let diff_header = h4![
-            id!("Difficulty-Display"),
-            text
-        ];
+        let diff_header = h4![id!("Difficulty-Display"), text];
 
         vec![diff_header, self.view_new_game_button()]
     }

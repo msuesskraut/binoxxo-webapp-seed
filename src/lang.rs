@@ -1,8 +1,8 @@
 use elsa::FrozenMap;
 use fluent_bundle::{FluentBundle, FluentResource};
-use unic_langid::LanguageIdentifier;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
+use unic_langid::LanguageIdentifier;
 
 lazy_static! {
     static ref LANG_RESOURCES: HashMap<&'static str, &'static str> = {
@@ -35,7 +35,7 @@ impl ResourceManager {
             res
         } else {
             let raw_resource = LANG_RESOURCES.get(locale).unwrap();
-            let res = match FluentResource::try_new(raw_resource.to_string()) {
+            let res = match FluentResource::try_new((*raw_resource).to_string()) {
                 Ok(res) => res,
                 Err((res, _err)) => res,
             };
@@ -47,7 +47,9 @@ impl ResourceManager {
         let loc: LanguageIdentifier = locale_str.parse().expect("invalid locale string");
         let mut bundle = FluentBundle::new(&[loc]);
         let res = self.get_resource(locale_str);
-        bundle.add_resource(res).expect("Failed to add FTL resource");
+        bundle
+            .add_resource(res)
+            .expect("Failed to add FTL resource");
         bundle
     }
 }
@@ -62,9 +64,12 @@ mod test {
         let b = rmgr.get_bundle("en-US");
 
         let mut errors = vec![];
-        let msg = b.get_message("difficulty-Easy")
+        let msg = b
+            .get_message("difficulty-Easy")
             .expect("Failed to retrieve the message");
-        let value = msg.value.expect("Failed to retrieve the value of the message");
+        let value = msg
+            .value
+            .expect("Failed to retrieve the value of the message");
 
         assert_eq!("Easy", b.format_pattern(value, None, &mut errors));
         assert!(errors.is_empty());
@@ -76,9 +81,12 @@ mod test {
         let b = rmgr.get_bundle("de-DE");
 
         let mut errors = vec![];
-        let msg = b.get_message("difficulty-Easy")
+        let msg = b
+            .get_message("difficulty-Easy")
             .expect("Failed to retrieve the message");
-        let value = msg.value.expect("Failed to retrieve the value of the message");
+        let value = msg
+            .value
+            .expect("Failed to retrieve the value of the message");
 
         assert_eq!("Leicht", b.format_pattern(value, None, &mut errors));
         assert!(errors.is_empty());
