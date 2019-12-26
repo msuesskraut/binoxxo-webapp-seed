@@ -31,7 +31,7 @@ impl<'a> ViewBuilder<'a> {
         self.tr_with_args(id, None)
     }
 
-    fn view_field(&self, field: Field) -> El<Message> {
+    fn view_field(&self, field: Field) -> Node<Message> {
         use seed::*;
 
         let classes = match field {
@@ -40,15 +40,14 @@ impl<'a> ViewBuilder<'a> {
             Field::O => "far fa-circle",
         };
 
-        let field_view = i![class![classes]];
+        let mut field_view = i![class![classes]];
         if Field::Empty == field {
-            field_view.add_style("font-size".into(), "20%".into())
-        } else {
-            field_view
+            field_view.add_style(St::FontSize, unit!(20, %));
         }
+        field_view
     }
 
-    fn view_cell(&self, col: usize, row: usize) -> El<Message> {
+    fn view_cell(&self, col: usize, row: usize) -> Node<Message> {
         use seed::*;
 
         let field = self.model.board.get(col, row);
@@ -70,21 +69,20 @@ impl<'a> ViewBuilder<'a> {
             self.view_field(field),
         ];
         if editable {
-            td.listeners
-                .push(simple_ev(Ev::Click, Message::Toggle(CellPos { col, row })));
+            td.add_listener(simple_ev(Ev::Click, Message::Toggle(CellPos { col, row })));
         }
         td
     }
 
-    fn view_row(&self, row: usize) -> El<Message> {
+    fn view_row(&self, row: usize) -> Node<Message> {
         use seed::*;
 
         let size = self.model.get_size();
-        let cells: Vec<El<Message>> = (0..size).map(|col| self.view_cell(col, row)).collect();
+        let cells: Vec<Node<Message>> = (0..size).map(|col| self.view_cell(col, row)).collect();
         tr![cells]
     }
 
-    fn view_difficulty(&self, difficulty: Difficulty) -> El<Message> {
+    fn view_difficulty(&self, difficulty: Difficulty) -> Node<Message> {
         use seed::*;
 
         a![
@@ -97,7 +95,7 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_new_game_button(&self) -> El<Message> {
+    fn view_new_game_button(&self) -> Node<Message> {
         use seed::*;
 
         let new_game_button = button![
@@ -127,22 +125,18 @@ impl<'a> ViewBuilder<'a> {
                 "data-placement" => "right";
                 "title" => self.tr("helper-tooltip");
             },
-            simple_ev(Ev::Click, Message::ToggleHelper)
-        ];
-        let enable_helper = enable_helper.add_attr(
-            "class".to_string(),
+            class!{
+                match self.model.helper {
+                    Helper::Disabled => "btn btn-outline-secondary",
+                    Helper::Enabled => "btn btn-secondary",
+                }
+            },
             match self.model.helper {
-                Helper::Disabled => "btn btn-outline-secondary",
-                Helper::Enabled => "btn btn-secondary",
-            }
-            .to_string(),
-        );
-        let enable_helper = enable_helper.add_text(
-            &(match self.model.helper {
                 Helper::Disabled => self.tr("helper-off"),
                 Helper::Enabled => self.tr("helper-on"),
-            }),
-        );
+            },
+            simple_ev(Ev::Click, Message::ToggleHelper)
+        ];
 
         div![
             class!["dropdown"],
@@ -153,11 +147,11 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_board(&self, board_id: &str, is_error: bool) -> El<Message> {
+    fn view_board(&self, board_id: &str, is_error: bool) -> Node<Message> {
         use seed::*;
 
         let size = self.model.get_size();
-        let rows: Vec<El<Message>> = (0..size).map(|row| self.view_row(row)).collect();
+        let rows: Vec<Node<Message>> = (0..size).map(|row| self.view_row(row)).collect();
         div![
             id!(board_id),
             class!["board"],
@@ -165,7 +159,7 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_new_game_button_success_page(&self, difficulty: Difficulty) -> El<Message> {
+    fn view_new_game_button_success_page(&self, difficulty: Difficulty) -> Node<Message> {
         use seed::*;
 
         button![
@@ -175,7 +169,7 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_success_alert(&self) -> El<Message> {
+    fn view_success_alert(&self) -> Node<Message> {
         use seed::*;
 
         div![
@@ -200,7 +194,7 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_success_page(&self) -> El<Message> {
+    fn view_success_page(&self) -> Node<Message> {
         use seed::*;
 
         div![
@@ -219,7 +213,7 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    fn view_game(&self) -> Vec<El<Message>> {
+    fn view_game(&self) -> Vec<Node<Message>> {
         let is_full = is_board_full(&self.model.board);
         let is_valid = is_board_valid(&self.model.board);
         let mut game = vec![self.view_board("board", is_full && !is_valid)];
@@ -229,7 +223,7 @@ impl<'a> ViewBuilder<'a> {
         game
     }
 
-    fn view_new_game(&self, difficulty: Difficulty) -> Vec<El<Message>> {
+    fn view_new_game(&self, difficulty: Difficulty) -> Vec<Node<Message>> {
         use seed::*;
 
         // build arguments for translation difficulty-display
@@ -249,7 +243,7 @@ impl<'a> ViewBuilder<'a> {
         vec![diff_header, self.view_new_game_button()]
     }
 
-    fn view_footer(&self) -> El<Message> {
+    fn view_footer(&self) -> Node<Message> {
         use seed::*;
 
         const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
@@ -284,7 +278,7 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    pub fn view(&self) -> El<Message> {
+    pub fn view(&self) -> impl View<Message> {
         use seed::*;
 
         let header = div![
@@ -340,7 +334,7 @@ fn build_view(model: &Model) -> ViewBuilder {
     }
 }
 
-pub fn view(model: &Model) -> impl ElContainer<Message> {
+pub fn view(model: &Model) -> impl View<Message> {
     let vb = build_view(model);
     vb.view()
 }

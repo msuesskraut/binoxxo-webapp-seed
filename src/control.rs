@@ -88,7 +88,7 @@ fn change_helper(model: &mut Model) {
     }
 }
 
-pub fn update(message: Message, model: &mut Model, _: &mut Orders<Message>) {
+pub fn update(message: Message, model: &mut Model, _: &mut impl Orders<Message>) {
     seed::log!(format!("Got {:?}", message));
 
     match message {

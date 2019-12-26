@@ -3,10 +3,10 @@ mod lang;
 mod model;
 mod view;
 
-use crate::control::{update, DIFFICULTY_STORAGE, HELPER_STORAGE, LANGUAGE_STORAGE};
+use crate::control::{update, Message, DIFFICULTY_STORAGE, HELPER_STORAGE, LANGUAGE_STORAGE};
 use crate::model::{Difficulty, Helper, Language, Model};
 use crate::view::view;
-use wasm_bindgen::prelude::*;
+use seed::prelude::*;
 
 fn load_difficulty() -> Option<Difficulty> {
     if let Some(storage) = seed::storage::get_storage() {
@@ -35,12 +35,17 @@ fn load_helper() -> Option<Helper> {
     None
 }
 
-#[wasm_bindgen]
-pub fn render() {
+fn after_mount(_url: Url, _orders: &mut impl Orders<Message>) -> AfterMount<Model> {
     let difficulty = load_difficulty().unwrap_or_default();
     let language = load_language().unwrap_or_default();
     let helper = load_helper().unwrap_or_default();
-
     let model = Model::new(difficulty, helper, language);
-    seed::App::build(model, update, view).finish().run();
+    AfterMount::new(model)
+}
+
+#[wasm_bindgen]
+pub fn render() {
+    seed::App::builder(update, view)
+        .after_mount(after_mount)
+        .build_and_start();
 }
