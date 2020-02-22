@@ -71,7 +71,7 @@ impl<'a> ViewBuilder<'a> {
             // otherwise "board" gets randomized in NewGame (bug in seed?)
             id!(&cell_id),
             class![class_name_guess, class_name_valid],
-            style! {"width" => format!("{}%", 100.0 / (size as f64))},
+            style! {St::Width => format!("{}%", 100.0 / (size as f64))},
             self.view_field(field),
         ];
         if editable {
@@ -129,7 +129,7 @@ impl<'a> ViewBuilder<'a> {
             attrs! {
                 "data-toggle" => "tooltip";
                 "data-placement" => "right";
-                "title" => self.tr("helper-tooltip");
+                At::Title => self.tr("helper-tooltip");
             },
             class! {
                 match self.model.helper {
