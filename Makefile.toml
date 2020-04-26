@@ -10,7 +10,7 @@ dependencies = [
 description = "Build with wasm-pack"
 install_crate = "wasm-pack"
 command = "wasm-pack"
-args = ["build", "--target", "no-modules", "--out-name", "binoxxo_webapp_seed", "--out-dir", "./dist"]
+args = ["build", "--target", "no-modules", "--out-name", "binoxxo_webapp_seed", "--out-dir", "./dist", "--release"]
 
 [tasks.build_css]
 description = "Build css from sass template"
