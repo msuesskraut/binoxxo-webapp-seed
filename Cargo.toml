@@ -15,7 +15,7 @@ crate-type = ["cdylib"]
 [dependencies]
 seed = "0.6.0"
 wasm-bindgen = "0.2.58"
-binoxxo = { version = "0.2.1", features = ["wasm-bindgen"] }
+binoxxo = { version = "0.3.0", features = ["wasm-bindgen"] }
 fluent-bundle = "0.10.2"
 unic-langid = { version = "0.8.0", features = ["macros"] }
 elsa = "1.3.2"
