@@ -3,7 +3,7 @@ use crate::model::*;
 use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid, is_move_valid};
 use fluent_bundle::{FluentArgs, FluentBundle, FluentResource, FluentValue};
-use seed::prelude::*;
+use seed::{prelude::*, *};
 use std::collections::HashMap;
 use web_sys::console::log_1;
 
@@ -38,15 +38,13 @@ impl<'a> ViewBuilder<'a> {
     }
 
     fn view_field(&self, field: Field) -> Node<Message> {
-        use seed::*;
-
         let classes = match field {
             Field::Empty => "fas fa-circle",
             Field::X => "fas fa-times",
             Field::O => "far fa-circle",
         };
 
-        let mut field_view = i![class![classes]];
+        let mut field_view = i![C![classes]];
         if Field::Empty == field {
             field_view.add_style(St::FontSize, unit!(20, %));
         }
@@ -54,45 +52,34 @@ impl<'a> ViewBuilder<'a> {
     }
 
     fn view_cell(&self, col: usize, row: usize) -> Node<Message> {
-        use seed::*;
-
         let field = self.model.board.get(col, row);
         let editable = self.model.editable.is_editable(col, row);
         let is_valid = (Helper::Disabled == self.model.helper)
             || (Field::Empty == field)
             || is_move_valid(&self.model.board, col, row);
-        let class_name_guess = if editable { "guess" } else { "" };
-        let class_name_valid = if !is_valid { "error" } else { "" };
         let cell_id = format!("cell-{}-{}", col, row);
         let size = self.model.get_size();
 
-        let mut td = td![
+        td![
             // id is required by engine for correct updates,
             // otherwise "board" gets randomized in NewGame (bug in seed?)
             id!(&cell_id),
-            class![class_name_guess, class_name_valid],
+            C![IF!(editable => "guess"), IF!(not(is_valid) => "error")],
             style! {St::Width => format!("{}%", 100.0 / (size as f64))},
             self.view_field(field),
-        ];
-        if editable {
-            td.add_listener(simple_ev(Ev::Click, Message::Toggle(CellPos { col, row })));
-        }
-        td
+            IF!(editable => simple_ev(Ev::Click, Message::Toggle(CellPos { col, row })))
+        ]
     }
 
     fn view_row(&self, row: usize) -> Node<Message> {
-        use seed::*;
-
         let size = self.model.get_size();
         let cells: Vec<Node<Message>> = (0..size).map(|col| self.view_cell(col, row)).collect();
         tr![cells]
     }
 
     fn view_difficulty(&self, difficulty: Difficulty) -> Node<Message> {
-        use seed::*;
-
         a![
-            class!["dropdown-item"],
+            C!["dropdown-item"],
             attrs! {
                 At::Href => "#";
             },
@@ -102,23 +89,21 @@ impl<'a> ViewBuilder<'a> {
     }
 
     fn view_new_game_button(&self) -> Node<Message> {
-        use seed::*;
-
         let new_game_button = button![
-            class!["btn btn-primary dropdown-toggle"],
+            C!["btn btn-primary dropdown-toggle"],
             id!("New-Game-Difficulty"),
             attrs! {
                 At::Type => "button";
                 "data-toggle" => "dropdown";
-                "aria-haspopup" => "true";
-                "aria-expanded" => "false";
+                At::AriaHasPopup => "true";
+                At::AriaExpanded => "false";
             },
             self.tr("new-game")
         ];
         let new_game_levels = div![
-            class!["dropdown-menu"],
+            C!["dropdown-menu"],
             attrs! {
-                "aria-labelledby" => "New-Game-Difficulty";
+                At::AriaLabelledBy => "New-Game-Difficulty";
             },
             self.view_difficulty(Difficulty::Easy),
             self.view_difficulty(Difficulty::Medium),
@@ -131,7 +116,7 @@ impl<'a> ViewBuilder<'a> {
                 "data-placement" => "right";
                 At::Title => self.tr("helper-tooltip");
             },
-            class! {
+            C! {
                 match self.model.helper {
                     Helper::Disabled => "btn btn-outline-secondary",
                     Helper::Enabled => "btn btn-secondary",
@@ -145,7 +130,7 @@ impl<'a> ViewBuilder<'a> {
         ];
 
         div![
-            class!["dropdown"],
+            C!["dropdown"],
             new_game_button,
             new_game_levels,
             raw!("&nbsp;"),
@@ -154,43 +139,37 @@ impl<'a> ViewBuilder<'a> {
     }
 
     fn view_board(&self, board_id: &str, is_error: bool) -> Node<Message> {
-        use seed::*;
-
         let size = self.model.get_size();
         let rows: Vec<Node<Message>> = (0..size).map(|row| self.view_row(row)).collect();
         div![
             id!(board_id),
-            class!["board"],
-            table![class![if is_error { "error" } else { "" }], rows,]
+            C!["board"],
+            table![C![if is_error { "error" } else { "" }], rows,]
         ]
     }
 
     fn view_new_game_button_success_page(&self, difficulty: Difficulty) -> Node<Message> {
-        use seed::*;
-
         button![
-            class!["btn btn-primary"],
+            C!["btn btn-primary"],
             self.tr(&format!("difficulty-{}", difficulty)),
             simple_ev(Ev::Click, Message::NewGame(difficulty))
         ]
     }
 
     fn view_success_alert(&self) -> Node<Message> {
-        use seed::*;
-
         div![
-            class!["alert alert-success"],
+            C!["alert alert-success"],
             attrs! {"role" => "alert"},
-            h1![class!["alert-heading"], self.tr("game-won")],
+            h1![C!["alert-heading"], self.tr("game-won")],
             hr![],
             div![
-                class!["centered mx-auto"],
+                C!["centered mx-auto"],
                 self.view_board("board-success", /*is_error:*/ false)
             ],
             hr![],
-            h4![class!["text-center"], self.tr("new-game")],
+            h4![C!["text-center"], self.tr("new-game")],
             div![
-                class!["text-center mx-auto"],
+                C!["text-center mx-auto"],
                 self.view_new_game_button_success_page(Difficulty::Easy),
                 raw!["&nbsp;"],
                 self.view_new_game_button_success_page(Difficulty::Medium),
@@ -201,18 +180,16 @@ impl<'a> ViewBuilder<'a> {
     }
 
     fn view_success_page(&self) -> Node<Message> {
-        use seed::*;
-
         div![
             id!("success-page"),
-            class!("overlay"),
+            C!("overlay"),
             div![
-                class!("overlay-content"),
+                C!("overlay-content"),
                 div![
-                    class!["container"],
+                    C!["container"],
                     div![
-                        class!["row justify-content-center"],
-                        div![class!["col"], self.view_success_alert()]
+                        C!["row justify-content-center"],
+                        div![C!["col"], self.view_success_alert()]
                     ]
                 ]
             ]
@@ -222,16 +199,13 @@ impl<'a> ViewBuilder<'a> {
     fn view_game(&self) -> Vec<Node<Message>> {
         let is_full = is_board_full(&self.model.board);
         let is_valid = is_board_valid(&self.model.board);
-        let mut game = vec![self.view_board("board", is_full && !is_valid)];
-        if is_valid {
-            game.push(self.view_success_page());
-        }
-        game
+        nodes![
+            self.view_board("board", is_full && !is_valid),
+            IF!(is_valid => self.view_success_page())
+        ]
     }
 
     fn view_new_game(&self, difficulty: Difficulty) -> Vec<Node<Message>> {
-        use seed::*;
-
         // build arguments for translation difficulty-display
         let mut difficulty_arg = HashMap::new();
         difficulty_arg.insert(
@@ -243,19 +217,17 @@ impl<'a> ViewBuilder<'a> {
 
         let diff_header = h4![id!("Difficulty-Display"), text];
 
-        vec![diff_header, self.view_new_game_button()]
+        nodes![diff_header, self.view_new_game_button()]
     }
 
     fn view_footer(&self) -> Node<Message> {
-        use seed::*;
-
         const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
         const REPO: Option<&'static str> = option_env!("CARGO_PKG_REPOSITORY");
 
         div![
-            class!["row"],
+            C!["row"],
             div![
-                class!["col footer"],
+                C!["col footer"],
                 self.tr("app-name"),
                 if let Some(url) = REPO {
                     span![
@@ -281,34 +253,32 @@ impl<'a> ViewBuilder<'a> {
         ]
     }
 
-    pub fn view(&self) -> impl View<Message> {
-        use seed::*;
-
+    pub fn view(&self) -> Node<Message> {
         let header = div![
-            class!["row"],
+            C!["row"],
             div![
-                class!["col"],
+                C!["col"],
                 div![
-                    class!["language-switch"],
+                    C!["language-switch"],
                     attrs! {
                         "data-toggle" => "tooltip";
                         "data-placement" => "bottom";
                         At::Title => self.tr("language-toggle");
                     },
-                    i![class!["fas fa-language"]],
+                    i![C!["fas fa-language"]],
                     simple_ev(Ev::Click, Message::ToggleLanguage),
                 ],
                 h1![self.tr("header")],
             ]
         ];
         let board = div![
-            class!["cl-xs-8 col-sm-8 col-md-8 col-lg-8"],
+            C!["cl-xs-8 col-sm-8 col-md-8 col-lg-8"],
             self.view_game()
         ];
         let controls = div![
-            class!["col-xs-4 col-sm-4 col-md-4 col-lg-4"],
+            C!["col-xs-4 col-sm-4 col-md-4 col-lg-4"],
             button![
-                class!["btn btn-secondary"],
+                C!["btn btn-secondary"],
                 id!("clear-board"),
                 self.tr("clear-board"),
                 simple_ev("click", Message::Clear)
@@ -322,9 +292,9 @@ impl<'a> ViewBuilder<'a> {
             ]
         ];
         div![
-            class!["container"],
+            C!["container"],
             header,
-            div![class!["row"], board, controls],
+            div![C!["row"], board, controls],
             self.view_footer()
         ]
     }
@@ -337,7 +307,7 @@ fn build_view(model: &Model) -> ViewBuilder {
     }
 }
 
-pub fn view(model: &Model) -> impl View<Message> {
+pub fn view(model: &Model) -> Node<Message> {
     let vb = build_view(model);
     vb.view()
 }

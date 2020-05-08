@@ -1,6 +1,7 @@
 use crate::model::{Difficulty, Model};
 use binoxxo::field::Field;
 use seed::prelude::*;
+use seed::browser::web_storage::LocalStorage;
 
 pub const DIFFICULTY_STORAGE: &str = "Binoxxo-Difficulty";
 pub const LANGUAGE_STORAGE: &str = "Binoxxo-Language";
@@ -40,11 +41,9 @@ fn toggle_field(model: &mut Model, pos: &CellPos) {
 
 fn new_game(model: &mut Model, difficulty: Difficulty) {
     seed::log!(model.board.to_string());
-    let storage = seed::storage::get_storage();
-    if let Some(storage) = storage {
-        seed::log!(format!("Store {} = {}", DIFFICULTY_STORAGE, difficulty));
-        seed::storage::store_data(&storage, DIFFICULTY_STORAGE, &difficulty);
-    }
+    seed::log!(format!("Store {} = {}", DIFFICULTY_STORAGE, difficulty));
+    LocalStorage::insert(DIFFICULTY_STORAGE, &difficulty).ok();
+
     let new_model = Model::new(difficulty, model.helper, model.language);
     model.board = new_model.board;
     model.difficulty = new_model.difficulty;
@@ -64,28 +63,22 @@ fn clear_board(model: &mut Model) {
 
 fn change_language(model: &mut Model) {
     model.language = model.language.next();
-    let storage = seed::storage::get_storage();
-    if let Some(storage) = storage {
-        seed::log!(format!(
-            "Store {} = {}",
-            LANGUAGE_STORAGE,
-            model.language.to_string()
-        ));
-        seed::storage::store_data(&storage, LANGUAGE_STORAGE, &model.language);
-    }
+    seed::log!(format!(
+        "Store {} = {}",
+        LANGUAGE_STORAGE,
+        model.language.to_string()
+    ));
+    LocalStorage::insert(LANGUAGE_STORAGE, &model.language).ok();
 }
 
 fn change_helper(model: &mut Model) {
     model.helper = model.helper.toggle();
-    let storage = seed::storage::get_storage();
-    if let Some(storage) = storage {
-        seed::log!(format!(
-            "Store {} = {}",
-            HELPER_STORAGE,
-            model.helper.to_string()
-        ));
-        seed::storage::store_data(&storage, HELPER_STORAGE, &model.helper);
-    }
+    seed::log!(format!(
+        "Store {} = {}",
+        HELPER_STORAGE,
+        model.helper.to_string()
+    ));
+    LocalStorage::insert(HELPER_STORAGE, &model.helper).ok();
 }
 
 pub fn update(message: Message, model: &mut Model, _: &mut impl Orders<Message>) {
