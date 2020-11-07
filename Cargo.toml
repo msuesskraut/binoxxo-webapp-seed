@@ -1,6 +1,6 @@
 [package]
 name = "binoxxo-webapp-seed"
-version = "0.3.1"
+version = "0.4.0"
 authors = ["Martin Suesskraut <martin.suesskraut@gmail.com>"]
 edition = "2018"
 readme = "README.md"
