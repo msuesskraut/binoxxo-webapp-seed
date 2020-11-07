@@ -37,18 +37,12 @@ impl<'a> ViewBuilder<'a> {
         self.tr_with_args(id, None)
     }
 
-    fn view_field(&self, field: Field) -> Node<Message> {
-        let classes = match field {
-            Field::Empty => "fas fa-circle",
-            Field::X => "fas fa-times",
-            Field::O => "far fa-circle",
-        };
-
-        let mut field_view = i![C![classes]];
-        if Field::Empty == field {
-            field_view.add_style(St::FontSize, unit!(20, %));
+    fn view_field(&self, field: Field) -> Vec<Node<Message>> {
+        match field {
+            Field::Empty => Node::<Message>::from_html(include_str!("../assets/icons/dot-opt.svg")),
+            Field::X => Node::<Message>::from_html(include_str!("../assets/icons/x-opt.svg")),
+            Field::O => Node::<Message>::from_html(include_str!("../assets/icons/o-opt.svg")),
         }
-        field_view
     }
 
     fn view_cell(&self, col: usize, row: usize) -> Node<Message> {
@@ -271,10 +265,7 @@ impl<'a> ViewBuilder<'a> {
                 h1![self.tr("header")],
             ]
         ];
-        let board = div![
-            C!["cl-xs-8 col-sm-8 col-md-8 col-lg-8"],
-            self.view_game()
-        ];
+        let board = div![C!["cl-xs-8 col-sm-8 col-md-8 col-lg-8"], self.view_game()];
         let controls = div![
             C!["col-xs-4 col-sm-4 col-md-4 col-lg-4"],
             button![
