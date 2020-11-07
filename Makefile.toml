@@ -23,7 +23,7 @@ script = [
     '''
     cp assets/index.html ./dist
     cp assets/favicon.png ./dist
-    cp -r assets/extra ./dist
+    cp -r assets/extra/* ./dist
     '''
 ]
 
