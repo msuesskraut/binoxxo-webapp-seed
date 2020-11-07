@@ -9,17 +9,14 @@ use crate::view::view;
 use seed::browser::web_storage::LocalStorage;
 use seed::prelude::*;
 
-fn after_mount(_url: Url, _orders: &mut impl Orders<Message>) -> AfterMount<Model> {
+fn init(_url: Url, _orders: &mut impl Orders<Message>) -> Model {
     let difficulty = LocalStorage::get(DIFFICULTY_STORAGE).unwrap_or_default();
     let language = LocalStorage::get(LANGUAGE_STORAGE).unwrap_or_default();
     let helper = LocalStorage::get(HELPER_STORAGE).unwrap_or_default();
-    let model = Model::new(difficulty, helper, language);
-    AfterMount::new(model)
+    Model::new(difficulty, helper, language)
 }
 
 #[wasm_bindgen]
 pub fn render() {
-    seed::App::builder(update, view)
-        .after_mount(after_mount)
-        .build_and_start();
+    seed::App::start("app", init, update, view);
 }

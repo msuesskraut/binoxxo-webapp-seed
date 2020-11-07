@@ -4,7 +4,6 @@ use binoxxo::field::Field;
 use binoxxo::rules::{is_board_full, is_board_valid, is_move_valid};
 use fluent_bundle::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use seed::{prelude::*, *};
-use std::collections::HashMap;
 use web_sys::console::log_1;
 
 struct ViewBuilder<'a> {
@@ -61,7 +60,7 @@ impl<'a> ViewBuilder<'a> {
             C![IF!(editable => "guess"), IF!(not(is_valid) => "error")],
             style! {St::Width => format!("{}%", 100.0 / (size as f64))},
             self.view_field(field),
-            IF!(editable => simple_ev(Ev::Click, Message::Toggle(CellPos { col, row })))
+            IF!(editable => ev(Ev::Click, move |_| { Message::Toggle(CellPos { col, row }) }))
         ]
     }
 
@@ -78,7 +77,7 @@ impl<'a> ViewBuilder<'a> {
                 At::Href => "#";
             },
             self.tr(&format!("difficulty-{}", difficulty)),
-            simple_ev(Ev::Click, Message::NewGame(difficulty))
+            ev(Ev::Click, move |_| { Message::NewGame(difficulty) })
         ]
     }
 
@@ -120,7 +119,7 @@ impl<'a> ViewBuilder<'a> {
                 Helper::Disabled => self.tr("helper-off"),
                 Helper::Enabled => self.tr("helper-on"),
             },
-            simple_ev(Ev::Click, Message::ToggleHelper)
+            ev(Ev::Click, |_| { Message::ToggleHelper })
         ];
 
         div![
@@ -146,7 +145,7 @@ impl<'a> ViewBuilder<'a> {
         button![
             C!["btn btn-primary"],
             self.tr(&format!("difficulty-{}", difficulty)),
-            simple_ev(Ev::Click, Message::NewGame(difficulty))
+            ev(Ev::Click, move |_| { Message::NewGame(difficulty) })
         ]
     }
 
@@ -201,10 +200,10 @@ impl<'a> ViewBuilder<'a> {
 
     fn view_new_game(&self, difficulty: Difficulty) -> Vec<Node<Message>> {
         // build arguments for translation difficulty-display
-        let mut difficulty_arg = HashMap::new();
-        difficulty_arg.insert(
+        let mut difficulty_arg = FluentArgs::new();
+        difficulty_arg.add(
             "difficulty",
-            FluentValue::String(self.tr(&format!("difficulty-{}", difficulty)).into()),
+            FluentValue::from(self.tr(&format!("difficulty-{}", difficulty))),
         );
 
         let text = self.tr_with_args("difficulty-display", Some(&difficulty_arg));
@@ -260,7 +259,7 @@ impl<'a> ViewBuilder<'a> {
                         At::Title => self.tr("language-toggle");
                     },
                     i![C!["fas fa-language"]],
-                    simple_ev(Ev::Click, Message::ToggleLanguage),
+                    ev(Ev::Click, |_| { Message::ToggleLanguage }),
                 ],
                 h1![self.tr("header")],
             ]
@@ -272,7 +271,7 @@ impl<'a> ViewBuilder<'a> {
                 C!["btn btn-secondary"],
                 id!("clear-board"),
                 self.tr("clear-board"),
-                simple_ev("click", Message::Clear)
+                ev("click", |_| { Message::Clear })
             ],
             self.view_new_game(self.model.difficulty),
             h4![self.tr("rules-header")],
