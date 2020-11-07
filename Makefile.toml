@@ -33,7 +33,7 @@ script = [
     '''
     copy assets\index.html .\dist
     copy assets\favicon.png .\dist
-    xcopy assets\extra .\dist /E
+    xcopy assets\extra .\dist /E /Y
     '''
 ]
 
