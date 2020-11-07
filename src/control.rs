@@ -1,7 +1,7 @@
 use crate::model::{Difficulty, Model};
 use binoxxo::field::Field;
-use seed::prelude::*;
 use seed::browser::web_storage::LocalStorage;
+use seed::prelude::*;
 
 pub const DIFFICULTY_STORAGE: &str = "Binoxxo-Difficulty";
 pub const LANGUAGE_STORAGE: &str = "Binoxxo-Language";
