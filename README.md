@@ -13,10 +13,14 @@ Based on:
 * [wasm](https://webassembly.org/)
 * [Binoxxo crate](https://crates.io/crates/binoxxo)
 
-# Build & run
+## Build & run
 
 Build and run with cargo-make:
 
-    cargo install cargo make
+    cargo install cargo-make
     cargo make build
     cargo make serve
+
+## License
+
+[MIT](LICENSE)
