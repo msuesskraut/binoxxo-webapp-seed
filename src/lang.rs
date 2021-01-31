@@ -45,7 +45,7 @@ impl ResourceManager {
 
     pub fn get_bundle(&self, locale_str: &str) -> FluentBundle<&FluentResource> {
         let loc: LanguageIdentifier = locale_str.parse().expect("invalid locale string");
-        let mut bundle = FluentBundle::new(&[loc]);
+        let mut bundle = FluentBundle::new(vec![loc]);
         let res = self.get_resource(locale_str);
         bundle
             .add_resource(res)
