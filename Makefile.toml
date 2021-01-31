@@ -18,6 +18,7 @@ install_crate = { crate_name = "rsass", binary = "rsass", features = ["commandli
 script = [ "rsass ./assets/main.scss >./dist/main.css" ]
 
 [tasks.build_assets]
+windows_alias = "build_assets_windows"
 description = "Copy assets into dist dir"
 script = [
     '''
@@ -27,7 +28,7 @@ script = [
     '''
 ]
 
-[tasks.build_assets.windows]
+[tasks.build_assets_windows]
 description = "Copy assets into dist dir"
 script = [
     '''
