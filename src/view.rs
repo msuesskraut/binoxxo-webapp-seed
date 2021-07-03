@@ -19,7 +19,7 @@ impl<'a> ViewBuilder<'a> {
             .get_message(id)
             .expect("Failed to retrieve the message");
         let value = msg
-            .value
+            .value()
             .expect("Failed to retrieve the value of the message");
         let res = self
             .bundle
@@ -201,7 +201,7 @@ impl<'a> ViewBuilder<'a> {
     fn view_new_game(&self, difficulty: Difficulty) -> Vec<Node<Message>> {
         // build arguments for translation difficulty-display
         let mut difficulty_arg = FluentArgs::new();
-        difficulty_arg.add(
+        difficulty_arg.set(
             "difficulty",
             FluentValue::from(self.tr(&format!("difficulty-{}", difficulty))),
         );

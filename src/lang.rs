@@ -68,7 +68,7 @@ mod test {
             .get_message("difficulty-Easy")
             .expect("Failed to retrieve the message");
         let value = msg
-            .value
+            .value()
             .expect("Failed to retrieve the value of the message");
 
         assert_eq!("Easy", b.format_pattern(value, None, &mut errors));
@@ -85,7 +85,7 @@ mod test {
             .get_message("difficulty-Easy")
             .expect("Failed to retrieve the message");
         let value = msg
-            .value
+            .value()
             .expect("Failed to retrieve the value of the message");
 
         assert_eq!("Leicht", b.format_pattern(value, None, &mut errors));
