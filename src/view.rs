@@ -258,7 +258,11 @@ impl<'a> ViewBuilder<'a> {
                         "data-placement" => "bottom";
                         At::Title => self.tr("language-toggle");
                     },
-                    i![C!["fas fa-language"]],
+                    img![attrs! {
+                        At::Src => "translate.svg",
+                        At::Height => "300%",
+                        At::Width => "300%",
+                    }],
                     ev(Ev::Click, |_| { Message::ToggleLanguage }),
                 ],
                 h1![self.tr("header")],
