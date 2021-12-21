@@ -18,7 +18,7 @@ wasm-bindgen = "0.2.78"
 binoxxo = "0.5.0"
 fluent-bundle = "0.15.2"
 unic-langid = { version = "0.9.0", features = ["macros"] }
-elsa = "1.4.0"
+elsa = "1.5.0"
 lazy_static = "1.4.0"
 
 # For serialization, eg sending requests to a server. Otherwise, not required.
