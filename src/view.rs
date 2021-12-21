@@ -82,25 +82,33 @@ impl<'a> ViewBuilder<'a> {
     }
 
     fn view_new_game_button(&self) -> Node<Message> {
-        let new_game_button = button![
-            C!["btn btn-primary dropdown-toggle"],
-            id!("New-Game-Difficulty"),
-            attrs! {
-                At::Type => "button";
-                "data-toggle" => "dropdown";
-                At::AriaHasPopup => "true";
-                At::AriaExpanded => "false";
-            },
-            self.tr("new-game")
+        let new_game_button = div![
+            C!["btn-group"],
+            attrs!{ "role" => "group" },
+            button![
+                id!("New-Game-Difficulty"),
+                C!["btn btn-primary dropdown-toggle"],
+                attrs! {
+                    "data-bs-toggle" => "dropdown",
+                    "aria-expanded" => false
+                },
+                self.tr("new-game"),
+            ],
+            ul![
+                C!["dropdown-menu"],
+                attrs! {
+                    "data-labelledby" => "New-Game-Difficulty";
+                },
+                self.view_difficulty(Difficulty::Easy),
+                self.view_difficulty(Difficulty::Medium),
+                self.view_difficulty(Difficulty::Hard),
+            ]
         ];
         let new_game_levels = div![
             C!["dropdown-menu"],
             attrs! {
                 At::AriaLabelledBy => "New-Game-Difficulty";
             },
-            self.view_difficulty(Difficulty::Easy),
-            self.view_difficulty(Difficulty::Medium),
-            self.view_difficulty(Difficulty::Hard),
         ];
         let enable_helper = button![
             id!("Enable-Disbale-Helper"),
