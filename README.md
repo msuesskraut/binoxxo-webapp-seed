@@ -22,6 +22,15 @@ Build and run with `trunk`:
     cargo test
     trunk serve --open
 
+## Publish
+
+Again use `trunk`:
+
+    cargo test
+    trunk build --public-url /binoxxo
+
+Copy files from `/dist` to a server into as `/binoxxo` directory.
+
 ## License
 
 [MIT](LICENSE)
