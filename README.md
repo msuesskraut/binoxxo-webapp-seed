@@ -1,4 +1,4 @@
-[![Built with cargo-make](https://sagiegurari.github.io/cargo-make/assets/badges/cargo-make.svg)](https://sagiegurari.github.io/cargo-make)
+
 
 # binoxxo-webapp-seed
 
@@ -12,14 +12,15 @@ Based on:
 * [seed](https://seed-rs.org/)
 * [wasm](https://webassembly.org/)
 * [Binoxxo crate](https://crates.io/crates/binoxxo)
+* [trunk](https://trunkrs.dev/)
 
 ## Build & run
 
-Build and run with cargo-make:
+Build and run with `trunk`:
 
-    cargo install cargo-make
-    cargo make build
-    cargo make serve
+    cargo install --locked trunk
+    cargo test
+    trunk serve --open
 
 ## License
 

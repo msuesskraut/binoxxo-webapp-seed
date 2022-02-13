@@ -1,16 +1,13 @@
 [package]
 name = "binoxxo-webapp-seed"
-version = "0.5.1"
+version = "0.5.2"
 authors = ["Martin Suesskraut <martin.suesskraut@gmail.com>"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 license = "MIT"
 description = "Binoxxo puzzle game as a webapp using wasm and seed"
 repository = "https://github.com/msuesskraut/binoxxo-webapp-seed"
 homepage = "https://msuesskraut.github.io/binoxxo/"
-
-[lib]
-crate-type = ["cdylib"]
 
 [dependencies]
 seed = "0.8.0"
