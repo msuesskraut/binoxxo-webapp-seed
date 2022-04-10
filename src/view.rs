@@ -38,9 +38,11 @@ impl<'a> ViewBuilder<'a> {
 
     fn view_field(&self, field: Field) -> Vec<Node<Message>> {
         match field {
-            Field::Empty => Node::<Message>::from_html(include_str!("../assets/icons/dot-opt.svg")),
-            Field::X => Node::<Message>::from_html(include_str!("../assets/icons/x-opt.svg")),
-            Field::O => Node::<Message>::from_html(include_str!("../assets/icons/o-opt.svg")),
+            Field::Empty => {
+                Node::<Message>::from_html(None, include_str!("../assets/icons/dot-opt.svg"))
+            }
+            Field::X => Node::<Message>::from_html(None, include_str!("../assets/icons/x-opt.svg")),
+            Field::O => Node::<Message>::from_html(None, include_str!("../assets/icons/o-opt.svg")),
         }
     }
 
@@ -84,7 +86,7 @@ impl<'a> ViewBuilder<'a> {
     fn view_new_game_button(&self) -> Node<Message> {
         let new_game_button = div![
             C!["btn-group"],
-            attrs!{ "role" => "group" },
+            attrs! { "role" => "group" },
             button![
                 id!("New-Game-Difficulty"),
                 C!["btn btn-primary dropdown-toggle"],
