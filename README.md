@@ -16,9 +16,14 @@ Based on:
 
 ## Build & run
 
-Build and run with `trunk`:
+Install `wasm` target and `trunk`:
 
+    rustup target add wasm32-unknown-unknown
     cargo install --locked trunk
+
+
+Run tests and serve page with `trunk`:
+
     cargo test
     trunk serve --open
 
@@ -27,9 +32,9 @@ Build and run with `trunk`:
 Again use `trunk`:
 
     cargo test
-    trunk build --public-url /binoxxo
+    trunk build --release --public-url /binoxxo
 
-Copy files from `/dist` to a server into as `/binoxxo` directory.
+Copy files from `/dist` to a server into a `/binoxxo` directory.
 
 ## License
 
